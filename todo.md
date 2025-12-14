@@ -178,10 +178,10 @@
 ### 1. ربط الواجهات بقاعدة البيانات
 - [x] إضافة tRPC procedures لشجرة الحسابات (CRUD كامل)
 - [x] إضافة tRPC procedures للعملاء (CRUD كامل)
-- [ ] إضافة tRPC procedures للموردين (CRUD كامل)
-- [ ] إضافة tRPC procedures للفواتير (CRUD كامل)
-- [ ] إضافة tRPC procedures للمدفوعات (CRUD كامل)
-- [ ] إضافة tRPC procedures للمخزون (CRUD كامل)
+- [x] إضافة tRPC procedures للموردين (CRUD كامل)
+- [x] إضافة tRPC procedures للفواتير (CRUD كامل)
+- [x] إضافة tRPC procedures للمدفوعات (CRUD كامل)
+- [x] إضافة tRPC procedures للمخزون (CRUD كامل)
 - [ ] إضافة tRPC procedures للمشتريات (CRUD كامل)
 - [ ] إضافة tRPC procedures للتقارير المالية
 - [ ] إضافة tRPC procedures للقيود المحاسبية

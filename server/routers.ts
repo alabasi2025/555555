@@ -4,6 +4,10 @@ import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, router } from "./_core/trpc";
 import { accountsRouter } from "./routers/accounts";
 import { customersRouter } from "./routers/customers";
+import { suppliersRouter } from "./routers/suppliers";
+import { invoicesRouter } from "./routers/invoices";
+import { paymentsRouter } from "./routers/payments";
+import { inventoryRouter } from "./routers/inventory";
 
 export const appRouter = router({
     // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly
@@ -22,6 +26,10 @@ export const appRouter = router({
   // Feature routers
   accounts: accountsRouter,
   customers: customersRouter,
+  suppliers: suppliersRouter,
+  invoices: invoicesRouter,
+  payments: paymentsRouter,
+  inventory: inventoryRouter,
 });
 
 export type AppRouter = typeof appRouter;
