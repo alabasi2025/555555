@@ -1,0 +1,9 @@
+client/src/pages/accounts/NewAccountForm.tsx
+client/src/pages/accounts/EditAccount.tsx
+client/src/pages/customers/AddNewCustomer.tsx
+client/src/pages/customers/EditCustomer.tsx
+client/src/pages/suppliers/AddSupplier.tsx
+client/src/pages/suppliers/EditSupplier.tsx
+client/src/pages/invoices/NewInvoiceForm.tsx
+client/src/pages/payments/PaymentForm.tsx
+client/src/pages/inventory/AddItem.tsx

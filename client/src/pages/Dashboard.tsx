@@ -1,6 +1,8 @@
+import MainLayout from "@/components/layout/MainLayout";
 import DashboardLayout from "@/components/DashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
+import { useEffect } from "react";
 import { 
   BookOpen, 
   Users, 
@@ -15,6 +17,15 @@ import {
 } from "lucide-react";
 
 export default function Dashboard() {
+  const [, setLocation] = useLocation();
+  
+  // التحقق من تسجيل الدخول
+  useEffect(() => {
+    const isAuthenticated = localStorage.getItem("demo-authenticated") === "true";
+    if (!isAuthenticated) {
+      setLocation("/login");
+    }
+  }, [setLocation]);
   const modules = [
     {
       title: "شجرة الحسابات",

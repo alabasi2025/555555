@@ -1,5 +1,6 @@
 import { Route, Switch } from "wouter";
 import Home from "./pages/Home";
+import SimpleLogin from "./pages/SimpleLogin";
 import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
 import ErrorBoundary from "./components/ErrorBoundary";
@@ -76,6 +77,7 @@ function App() {
           <Switch>
             {/* Main */}
             <Route path="/" component={Home} />
+            <Route path="/login" component={SimpleLogin} />
             <Route path="/dashboard" component={Dashboard} />
             
             {/* Accounts */}

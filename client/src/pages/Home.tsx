@@ -1,13 +1,22 @@
-import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Loader2, ArrowRight } from "lucide-react";
-import { getLoginUrl } from "@/const";
 import { useLocation } from "wouter";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export default function Home() {
-  const { user, loading, error, isAuthenticated, logout } = useAuth();
   const [, setLocation] = useLocation();
+  const [user, setUser] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const isAuthenticated = localStorage.getItem("demo-authenticated") === "true";
+
+  // تحميل معلومات المستخدم من localStorage
+  useEffect(() => {
+    const storedUser = localStorage.getItem("demo-user");
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+    setLoading(false);
+  }, []);
 
   // توجيه المستخدم المسجل إلى لوحة التحكم تلقائياً
   useEffect(() => {
@@ -15,6 +24,13 @@ export default function Home() {
       setLocation("/dashboard");
     }
   }, [isAuthenticated, loading, setLocation]);
+
+  const logout = () => {
+    localStorage.removeItem("demo-user");
+    localStorage.removeItem("demo-authenticated");
+    setUser(null);
+    window.location.reload();
+  };
 
   if (loading) {
     return (
@@ -49,16 +65,14 @@ export default function Home() {
           </div>
         ) : (
           <div className="space-y-4">
-            <Button size="lg" onClick={() => window.location.href = getLoginUrl()} className="gap-2">
+            <Button size="lg" onClick={() => setLocation("/login")} className="gap-2">
               تسجيل الدخول
               <ArrowRight className="h-5 w-5" />
             </Button>
           </div>
         )}
 
-        {error && (
-          <p className="mt-4 text-red-600">حدث خطأ: {error.message}</p>
-        )}
+
       </div>
     </div>
   );
