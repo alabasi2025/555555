@@ -34,18 +34,20 @@ import InvoiceDetails from "./pages/invoices/InvoiceDetails";
 // Billing & Payments
 import NewPaymentForm from "./pages/billing/NewPaymentForm";
 import BillingReports from "./pages/billing/BillingReports";
-import PaymentsLog from "./pages/payments/PaymentsLog";
+import PaymentForm from "./pages/payments/PaymentForm";
+import PaymentsList from "./pages/payments/PaymentsList";
 
 // Inventory
 import CategoriesList from "./pages/inventory/CategoriesList";
-import AddItemForm from "./pages/inventory/AddItemForm";
+import AddItem from "./pages/inventory/AddItem";
 import ItemDetailsPage from "./pages/inventory/ItemDetailsPage";
-import InventoryMovements from "./pages/inventory/InventoryMovements";
-import AddInventoryMovement from "./pages/inventory/AddInventoryMovement";
+import StockMovement from "./pages/inventory/StockMovement";
+import StockMovementsList from "./pages/inventory/StockMovementsList";
 import CurrentInventoryReport from "./pages/inventory/CurrentInventoryReport";
 
 // Purchases
-import PurchaseRequestsList from "./pages/purchases/PurchaseRequestsList";
+import PurchaseOrder from "./pages/purchases/PurchaseOrder";
+import PurchaseOrdersList from "./pages/purchases/PurchaseOrdersList";
 import CreatePurchaseRequest from "./pages/purchases/CreatePurchaseRequest";
 import MaterialReceiptForm from "./pages/purchases/MaterialReceiptForm";
 

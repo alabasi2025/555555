@@ -251,7 +251,7 @@ const AccountDetails: React.FC<AccountDetailsProps> = ({ account, onUpdate, isLo
                       type="number"
                       placeholder="الرصيد"
                       {...field}
-                      onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
+                      onChange={(e: React.FormEvent) => field.onChange(parseFloat(e.target.value) || 0)}
                       disabled={isLoading}
                     />
                   </FormControl>

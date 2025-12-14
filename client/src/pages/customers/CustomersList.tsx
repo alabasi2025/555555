@@ -105,7 +105,7 @@ const fetchCustomers = (): Promise<Customer[]> => {
 const columns = [
   {
     id: 'select',
-    header: ({ table }: any) => (
+    header: ({ table }: unknown) => (
       <Checkbox
         checked={
           table.getIsAllPageRowsSelected() ||
@@ -115,7 +115,7 @@ const columns = [
         aria-label='تحديد الكل'
       />
     ),
-    cell: ({ row }: any) => (
+    cell: ({ row }: unknown) => (
       <Checkbox
         checked={row.getIsSelected()}
         onCheckedChange={(value) => row.toggleSelected(!!value)}
@@ -144,14 +144,14 @@ const columns = [
   {
     accessorKey: 'total_orders',
     header: 'إجمالي الطلبات',
-    cell: ({ row }: any) => (
+    cell: ({ row }: unknown) => (
       <div className='text-right'>{row.original.total_orders}</div>
     ),
   },
   {
     accessorKey: 'status',
     header: 'الحالة',
-    cell: ({ row }: any) => {
+    cell: ({ row }: unknown) => {
       const status = row.original.status;
       let variant: 'default' | 'secondary' | 'destructive' | 'outline' =
         'secondary';
@@ -167,7 +167,7 @@ const columns = [
   },
   {
     id: 'actions',
-    cell: ({ row }: any) => (
+    cell: ({ row }: unknown) => (
       <DropdownMenu dir='rtl'>
         <DropdownMenuTrigger asChild>
           <Button variant='ghost' className='h-8 w-8 p-0'>
@@ -269,7 +269,7 @@ export const CustomersList: React.FC = () => {
                 <Input
                   placeholder='ابحث بالاسم أو البريد الإلكتروني أو المعرف...'
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={(e: React.FormEvent) => setSearchTerm(e.target.value)}
                   className='w-full pr-10 text-right'
                 />
               </div>

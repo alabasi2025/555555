@@ -254,7 +254,7 @@ export default function NewAccountForm() {
                         type="number"
                         placeholder="0.00"
                         {...field}
-                        onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                        onChange={(e: React.FormEvent) => field.onChange(parseFloat(e.target.value))}
                         disabled={isLoading}
                       />
                     </FormControl>

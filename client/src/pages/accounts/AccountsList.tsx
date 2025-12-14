@@ -70,7 +70,7 @@ export default function AccountsList() {
                 <Input
                   placeholder="البحث برقم الحساب أو الاسم..."
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={(e: React.FormEvent) => setSearchTerm(e.target.value)}
                   className="pr-10"
                 />
               </div>
