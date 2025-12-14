@@ -45,7 +45,7 @@ const AccountTypes = [
 
 // قائمة افتراضية للحسابات الأب (لأغراض العرض)
 const ParentAccounts = [
-  { label: "لا يوجد حساب أب", value: "" },
+  { label: "لا يوجد حساب أب", value: "none" },
   { label: "1000 - الأصول المتداولة", value: "1000" },
   { label: "2000 - الخصوم المتداولة", value: "2000" },
   { label: "3000 - رأس المال", value: "3000" },

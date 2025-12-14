@@ -12,10 +12,10 @@ import { toast } from "sonner";
 
 export default function NewAccountForm() {
   const [, setLocation] = useLocation();
+  const [selectedType, setSelectedType] = useState<string>("");
   const [formData, setFormData] = useState({
     code: "",
     name: "",
-    type: "",
     parentId: "",
     description: "",
     isActive: true,
@@ -33,7 +33,7 @@ export default function NewAccountForm() {
     e.preventDefault();
     
     // Validation
-    if (!formData.code || !formData.name || !formData.type) {
+    if (!formData.code || !formData.name || !selectedType) {
       toast.error("يرجى ملء جميع الحقول المطلوبة");
       return;
     }
@@ -78,8 +78,8 @@ export default function NewAccountForm() {
                 <div className="space-y-2">
                   <Label htmlFor="type">نوع الحساب *</Label>
                   <Select
-                    value={formData.type}
-                    onValueChange={(value) => setFormData({ ...formData, type: value })}
+                    value={selectedType || undefined}
+                    onValueChange={(value) => setSelectedType(value)}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="اختر نوع الحساب" />

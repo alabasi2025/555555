@@ -592,7 +592,7 @@ export const StockMovementsList: React.FC = () => {
                 table.getColumn('type')?.setFilterValue((e.target as HTMLInputElement).value ? [(e.target as HTMLInputElement).value] : undefined)
               }
             >
-              <SelectItem value="">
+              <SelectItem value="all">
                 <SelectValue placeholder="فلترة حسب النوع" />
               </SelectItem>
               <SelectItem value="Entry">{movementTypeMap.Entry}</SelectItem>

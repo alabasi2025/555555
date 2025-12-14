@@ -5,9 +5,12 @@ import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 function Select({
+  value,
   ...props
 }: React.ComponentProps<typeof SelectPrimitive.Root>) {
-  return <SelectPrimitive.Root data-slot="select" {...props} />;
+  // Prevent empty string values which cause Radix UI errors
+  const safeValue = value === "" ? undefined : value;
+  return <SelectPrimitive.Root data-slot="select" value={safeValue} {...props} />;
 }
 
 function SelectGroup({
