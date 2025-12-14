@@ -1,21 +1,141 @@
 import { Route, Switch } from "wouter";
 import Home from "./pages/Home";
 import Dashboard from "./pages/Dashboard";
-import AccountsList from "./pages/accounts/AccountsList";
 import NotFound from "./pages/NotFound";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
+import { Toaster } from "./components/ui/sonner";
+import { TooltipProvider } from "./components/ui/tooltip";
+
+// Accounts
+import AccountsList from "./pages/accounts/AccountsList";
+import AccountDetails from "./pages/accounts/AccountDetails";
+import AccountTreePage from "./pages/accounts/AccountTreePage";
+import EditAccount from "./pages/accounts/EditAccount";
+import NewAccountForm from "./pages/accounting/NewAccountForm";
+
+// Customers
+import CustomersList from "./pages/customers/CustomersList";
+import CustomerDetails from "./pages/customers/CustomerDetails";
+import AddNewCustomer from "./pages/customers/AddNewCustomer";
+import EditCustomer from "./pages/customers/EditCustomer";
+
+// Suppliers
+import SuppliersList from "./pages/suppliers/SuppliersList";
+import SupplierDetails from "./pages/suppliers/SupplierDetails";
+import AddSupplier from "./pages/suppliers/AddSupplier";
+import EditSupplier from "./pages/suppliers/EditSupplier";
+
+// Invoices
+import InvoicesList from "./pages/invoices/InvoicesList";
+import NewInvoiceForm from "./pages/invoices/NewInvoiceForm";
+import InvoiceDetails from "./pages/invoices/InvoiceDetails";
+
+// Billing & Payments
+import NewPaymentForm from "./pages/billing/NewPaymentForm";
+import BillingReports from "./pages/billing/BillingReports";
+import PaymentsLog from "./pages/payments/PaymentsLog";
+
+// Inventory
+import CategoriesList from "./pages/inventory/CategoriesList";
+import AddItemForm from "./pages/inventory/AddItemForm";
+import ItemDetailsPage from "./pages/inventory/ItemDetailsPage";
+import InventoryMovements from "./pages/inventory/InventoryMovements";
+import AddInventoryMovement from "./pages/inventory/AddInventoryMovement";
+import CurrentInventoryReport from "./pages/inventory/CurrentInventoryReport";
+
+// Purchases
+import PurchaseRequestsList from "./pages/purchases/PurchaseRequestsList";
+import CreatePurchaseRequest from "./pages/purchases/CreatePurchaseRequest";
+import MaterialReceiptForm from "./pages/purchases/MaterialReceiptForm";
+
+// Reports
+import AccountBalancesReport from "./pages/reports/AccountBalancesReport";
+import BalanceSheetReport from "./pages/reports/BalanceSheetReport";
+import IncomeStatementReport from "./pages/reports/IncomeStatementReport";
+import CashFlowStatementReport from "./pages/financial/CashFlowStatementReport";
+import AccountsReceivableAging from "./pages/reports/AccountsReceivableAging";
+import AccountsPayableAgingReport from "./pages/reports/AccountsPayableAgingReport";
+
+// Journal & Accounting
+import DailyJournalsPage from "./pages/accounting/DailyJournalsPage";
+import AddJournalEntry from "./pages/journal/AddJournalEntry";
+import PostJournalEntries from "./pages/journal/PostJournalEntries";
+import BankReconciliation from "./pages/journal/BankReconciliation";
+import GeneralLedger from "./pages/journal/GeneralLedger";
 
 function App() {
   return (
     <ErrorBoundary>
-      <ThemeProvider>
-        <Switch>
-          <Route path="/" component={Home} />
-          <Route path="/dashboard" component={Dashboard} />
-          <Route path="/accounts" component={AccountsList} />
-          <Route component={NotFound} />
-        </Switch>
+      <ThemeProvider defaultTheme="light">
+        <TooltipProvider>
+          <Toaster />
+          <Switch>
+            {/* Main */}
+            <Route path="/" component={Home} />
+            <Route path="/dashboard" component={Dashboard} />
+            
+            {/* Accounts */}
+            <Route path="/accounts" component={AccountsList} />
+            <Route path="/accounts/new" component={NewAccountForm} />
+            <Route path="/accounts/tree" component={AccountTreePage} />
+            <Route path="/accounts/:id" component={AccountDetails} />
+            <Route path="/accounts/:id/edit" component={EditAccount} />
+            
+            {/* Customers */}
+            <Route path="/customers" component={CustomersList} />
+            <Route path="/customers/new" component={AddNewCustomer} />
+            <Route path="/customers/:id" component={CustomerDetails} />
+            <Route path="/customers/:id/edit" component={EditCustomer} />
+            
+            {/* Suppliers */}
+            <Route path="/suppliers" component={SuppliersList} />
+            <Route path="/suppliers/new" component={AddSupplier} />
+            <Route path="/suppliers/:id" component={SupplierDetails} />
+            <Route path="/suppliers/:id/edit" component={EditSupplier} />
+            
+            {/* Invoices */}
+            <Route path="/invoices" component={InvoicesList} />
+            <Route path="/invoices/new" component={NewInvoiceForm} />
+            <Route path="/invoices/:id" component={InvoiceDetails} />
+            
+            {/* Billing & Payments */}
+            <Route path="/payments/new" component={NewPaymentForm} />
+            <Route path="/payments/log" component={PaymentsLog} />
+            <Route path="/billing/reports" component={BillingReports} />
+            
+            {/* Inventory */}
+            <Route path="/inventory" component={CategoriesList} />
+            <Route path="/inventory/new" component={AddItemForm} />
+            <Route path="/inventory/:id" component={ItemDetailsPage} />
+            <Route path="/inventory/movements" component={InventoryMovements} />
+            <Route path="/inventory/movements/new" component={AddInventoryMovement} />
+            <Route path="/inventory/report" component={CurrentInventoryReport} />
+            
+            {/* Purchases */}
+            <Route path="/purchases" component={PurchaseRequestsList} />
+            <Route path="/purchases/new" component={CreatePurchaseRequest} />
+            <Route path="/purchases/receipt" component={MaterialReceiptForm} />
+            
+            {/* Reports */}
+            <Route path="/reports/account-balances" component={AccountBalancesReport} />
+            <Route path="/reports/balance-sheet" component={BalanceSheetReport} />
+            <Route path="/reports/income-statement" component={IncomeStatementReport} />
+            <Route path="/reports/cash-flow" component={CashFlowStatementReport} />
+            <Route path="/reports/receivables" component={AccountsReceivableAging} />
+            <Route path="/reports/payables" component={AccountsPayableAgingReport} />
+            
+            {/* Journal & Accounting */}
+            <Route path="/journal-entries" component={DailyJournalsPage} />
+            <Route path="/journal-entries/new" component={AddJournalEntry} />
+            <Route path="/journal-entries/post" component={PostJournalEntries} />
+            <Route path="/journal-entries/reconciliation" component={BankReconciliation} />
+            <Route path="/ledger" component={GeneralLedger} />
+            
+            {/* 404 */}
+            <Route component={NotFound} />
+          </Switch>
+        </TooltipProvider>
       </ThemeProvider>
     </ErrorBoundary>
   );
