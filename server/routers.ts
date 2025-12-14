@@ -11,6 +11,14 @@ import { inventoryRouter } from "./routers/inventory";
 import { purchasesRouter } from "./routers/purchases";
 import { reportsRouter } from "./routers/reports";
 import { journalEntriesRouter } from "./routers/journalEntries";
+import { rolesRouter } from "./routers/roles";
+import { permissionsRouter } from "./routers/permissions";
+import { subscriptionsRouter } from "./routers/subscriptions";
+import { metersRouter } from "./routers/meters";
+import { workOrdersRouter } from "./routers/workOrders";
+import { assetsRouter } from "./routers/assets";
+import { maintenanceRouter } from "./routers/maintenance";
+import { monitoringRouter } from "./routers/monitoring";
 
 export const appRouter = router({
     // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly
@@ -36,6 +44,16 @@ export const appRouter = router({
   purchases: purchasesRouter,
   reports: reportsRouter,
   journalEntries: journalEntriesRouter,
+  
+  // Phase 1 routers
+  roles: rolesRouter,
+  permissions: permissionsRouter,
+  subscriptions: subscriptionsRouter,
+  meters: metersRouter,
+  workOrders: workOrdersRouter,
+  assets: assetsRouter,
+  maintenance: maintenanceRouter,
+  monitoring: monitoringRouter,
 });
 
 export type AppRouter = typeof appRouter;

@@ -1,0 +1,15 @@
+إنشاء router لإدارة الأدوار (roles.ts) مع 6 procedures: list, getById, create, update, delete, assignPermissions
+
+إنشاء router لإدارة الصلاحيات (permissions.ts) مع 5 procedures: list, getByRoleId, create, delete, bulkCreate
+
+إنشاء router لإدارة الاشتراكات (subscriptions.ts) مع 7 procedures: list, getById, create, update, cancel, renew, getByCustomerId
+
+إنشاء router لإدارة العدادات (meters.ts) مع 6 procedures: list, getById, create, update, delete, getByCustomerId
+
+إنشاء router لإدارة أوامر العمل (workOrders.ts) مع 7 procedures: list, getById, create, update, assign, complete, cancel
+
+إنشاء router لإدارة الأصول (assets.ts) مع 6 procedures: list, getById, create, update, delete, retire
+
+إنشاء router لإدارة الصيانة (maintenance.ts) مع 7 procedures: list, getById, create, update, complete, cancel, getByAssetId
+
+إنشاء router لإدارة المراقبة (monitoring.ts) مع 5 procedures: getDashboardStats, getSystemAlerts, getPerformanceMetrics, getKPIs, getActivityLog
