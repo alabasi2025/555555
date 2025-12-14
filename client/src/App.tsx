@@ -68,6 +68,21 @@ import PostJournalEntries from "./pages/journal/PostJournalEntries";
 import BankReconciliation from "./pages/journal/BankReconciliation";
 import GeneralLedger from "./pages/journal/GeneralLedger";
 
+// Phase 1 - Users & Roles
+import UsersList from "./pages/users/UsersList";
+import RolesList from "./pages/roles/RolesList";
+
+// Phase 1 - Subscriptions & Meters
+import SubscriptionsList from "./pages/subscriptions/SubscriptionsList";
+import MetersList from "./pages/meters/MetersList";
+
+// Phase 1 - Work Orders & Assets
+import WorkOrdersList from "./pages/work-orders/WorkOrdersList";
+import AssetsList from "./pages/assets/AssetsList";
+
+// Phase 1 - Maintenance
+import MaintenanceSchedule from "./pages/maintenance/MaintenanceSchedule";
+
 function App() {
   return (
     <ErrorBoundary>
@@ -135,6 +150,21 @@ function App() {
             <Route path="/journal-entries/post" component={PostJournalEntries} />
             <Route path="/journal-entries/reconciliation" component={BankReconciliation} />
             <Route path="/ledger" component={GeneralLedger} />
+            
+            {/* Phase 1 - Users & Roles */}
+            <Route path="/users" component={UsersList} />
+            <Route path="/roles" component={RolesList} />
+            
+            {/* Phase 1 - Subscriptions & Meters */}
+            <Route path="/subscriptions" component={SubscriptionsList} />
+            <Route path="/meters" component={MetersList} />
+            
+            {/* Phase 1 - Work Orders & Assets */}
+            <Route path="/work-orders" component={WorkOrdersList} />
+            <Route path="/assets" component={AssetsList} />
+            
+            {/* Phase 1 - Maintenance */}
+            <Route path="/maintenance" component={MaintenanceSchedule} />
             
             {/* 404 */}
             <Route component={NotFound} />
