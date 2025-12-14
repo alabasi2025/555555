@@ -35,6 +35,10 @@ async function startServer() {
   app.use(express.urlencoded({ limit: "50mb", extended: true }));
   // OAuth callback under /api/oauth/callback
   registerOAuthRoutes(app);
+  
+  // REST API routes
+  const accountsRouter = await import("../routes/accounts").then(m => m.default);
+  app.use("/api/accounts", accountsRouter);
   // tRPC API
   app.use(
     "/api/trpc",
