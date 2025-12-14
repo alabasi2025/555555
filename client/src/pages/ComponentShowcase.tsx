@@ -510,7 +510,7 @@ export default function ComponentsShowcase() {
                               }
                               onChange={e => {
                                 const [hours, minutes] =
-                                  e.target.value.split(":");
+                                  (e.target as HTMLInputElement).value.split(":");
                                 const newDate = datePickerDate
                                   ? new Date(datePickerDate)
                                   : new Date();
@@ -1038,7 +1038,7 @@ export default function ComponentsShowcase() {
                             id="dialog-input"
                             placeholder="Type something..."
                             value={dialogInput}
-                            onChange={(e: React.FormEvent) => setDialogInput(e.target.value)}
+                            onChange={(e: any) => setDialogInput((e.target as HTMLInputElement).value)}
                             onKeyDown={handleDialogKeyDown}
                             autoFocus
                           />

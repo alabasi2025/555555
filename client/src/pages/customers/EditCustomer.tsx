@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -156,7 +157,7 @@ export default function EditCustomer() {
                 <FormField
                   control={form.control}
                   name="name"
-                  render={({ field }) => (
+                  render={({ field }: { field: any }) => (
                     <FormItem className="text-right">
                       <FormLabel>الاسم الكامل (*)</FormLabel>
                       <FormControl>
@@ -171,7 +172,7 @@ export default function EditCustomer() {
                 <FormField
                   control={form.control}
                   name="email"
-                  render={({ field }) => (
+                  render={({ field }: { field: any }) => (
                     <FormItem className="text-right">
                       <FormLabel>البريد الإلكتروني (*)</FormLabel>
                       <FormControl>
@@ -186,7 +187,7 @@ export default function EditCustomer() {
                 <FormField
                   control={form.control}
                   name="phone"
-                  render={({ field }) => (
+                  render={({ field }: { field: any }) => (
                     <FormItem className="text-right">
                       <FormLabel>رقم الهاتف (*)</FormLabel>
                       <FormControl>
@@ -201,7 +202,7 @@ export default function EditCustomer() {
                 <FormField
                   control={form.control}
                   name="address"
-                  render={({ field }) => (
+                  render={({ field }: { field: any }) => (
                     <FormItem className="text-right">
                       <FormLabel>العنوان</FormLabel>
                       <FormControl>

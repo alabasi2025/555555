@@ -42,8 +42,9 @@ import CategoriesList from "./pages/inventory/CategoriesList";
 import AddItem from "./pages/inventory/AddItem";
 import ItemDetailsPage from "./pages/inventory/ItemDetailsPage";
 import StockMovement from "./pages/inventory/StockMovement";
-import StockMovementsList from "./pages/inventory/StockMovementsList";
+import { StockMovementsList } from "@/pages/inventory/StockMovementsList";
 import CurrentInventoryReport from "./pages/inventory/CurrentInventoryReport";
+// import ItemsList from "./pages/inventory/ItemsList";
 
 // Purchases
 import PurchaseOrder from "./pages/purchases/PurchaseOrder";
@@ -103,19 +104,18 @@ function App() {
             
             {/* Billing & Payments */}
             <Route path="/payments/new" component={NewPaymentForm} />
-            <Route path="/payments/log" component={PaymentsLog} />
-            <Route path="/billing/reports" component={BillingReports} />
+            <Route path="/invoices/payments" component={PaymentsList} />           <Route path="/billing/reports" component={BillingReports} />
             
             {/* Inventory */}
             <Route path="/inventory" component={CategoriesList} />
-            <Route path="/inventory/new" component={AddItemForm} />
+            <Route path="/inventory/add-item" component={AddItem} />
             <Route path="/inventory/:id" component={ItemDetailsPage} />
-            <Route path="/inventory/movements" component={InventoryMovements} />
-            <Route path="/inventory/movements/new" component={AddInventoryMovement} />
+            <Route path="/inventory/movements" component={StockMovementsList} />
+            <Route path="/inventory/add-movement" component={StockMovement} />
             <Route path="/inventory/report" component={CurrentInventoryReport} />
             
             {/* Purchases */}
-            <Route path="/purchases" component={PurchaseRequestsList} />
+            <Route path="/purchases/requests" component={PurchaseOrdersList} />
             <Route path="/purchases/new" component={CreatePurchaseRequest} />
             <Route path="/purchases/receipt" component={MaterialReceiptForm} />
             

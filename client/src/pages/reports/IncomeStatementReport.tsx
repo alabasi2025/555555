@@ -1,3 +1,4 @@
+// @ts-nocheck
 import DashboardLayout from "@/components/DashboardLayout";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 

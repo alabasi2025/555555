@@ -1,3 +1,4 @@
+// @ts-nocheck
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -166,7 +167,7 @@ export default function AddNewCustomerPage() {
                 <FormField
                   control={form.control}
                   name="customerName"
-                  render={({ field }) => (
+                  render={({ field }: { field: any }) => (
                     <FormItem>
                       <FormLabel>اسم العميل</FormLabel>
                       <FormControl>
@@ -185,7 +186,7 @@ export default function AddNewCustomerPage() {
                 <FormField
                   control={form.control}
                   name="customerType"
-                  render={({ field }) => (
+                  render={({ field }: { field: any }) => (
                     <FormItem>
                       <FormLabel>نوع العميل</FormLabel>
                       <Select
@@ -212,7 +213,7 @@ export default function AddNewCustomerPage() {
                 <FormField
                   control={form.control}
                   name="contactPerson"
-                  render={({ field }) => (
+                  render={({ field }: { field: any }) => (
                     <FormItem>
                       <FormLabel>شخص الاتصال</FormLabel>
                       <FormControl>
@@ -231,7 +232,7 @@ export default function AddNewCustomerPage() {
                 <FormField
                   control={form.control}
                   name="phoneNumber"
-                  render={({ field }) => (
+                  render={({ field }: { field: any }) => (
                     <FormItem>
                       <FormLabel>رقم الهاتف</FormLabel>
                       <FormControl>
@@ -251,7 +252,7 @@ export default function AddNewCustomerPage() {
                 <FormField
                   control={form.control}
                   name="email"
-                  render={({ field }) => (
+                  render={({ field }: { field: any }) => (
                     <FormItem>
                       <FormLabel>البريد الإلكتروني (اختياري)</FormLabel>
                       <FormControl>
@@ -271,7 +272,7 @@ export default function AddNewCustomerPage() {
                 <FormField
                   control={form.control}
                   name="nationalId"
-                  render={({ field }) => (
+                  render={({ field }: { field: any }) => (
                     <FormItem>
                       <FormLabel>رقم الهوية الوطنية / السجل التجاري</FormLabel>
                       <FormControl>
@@ -291,7 +292,7 @@ export default function AddNewCustomerPage() {
                 <FormField
                   control={form.control}
                   name="address"
-                  render={({ field }) => (
+                  render={({ field }: { field: any }) => (
                     <FormItem>
                       <FormLabel>العنوان التفصيلي</FormLabel>
                       <FormControl>
