@@ -1,0 +1,8 @@
+client/src/pages/customers/CustomersList.tsx
+client/src/pages/suppliers/SuppliersList.tsx
+client/src/pages/invoices/InvoicesList.tsx
+client/src/pages/payments/PaymentsList.tsx
+client/src/pages/inventory/CategoriesList.tsx
+client/src/pages/purchases/PurchaseRequestsList.tsx
+client/src/pages/purchases/PurchaseOrdersList.tsx
+client/src/pages/accounting/JournalEntriesList.tsx
