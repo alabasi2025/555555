@@ -30,6 +30,10 @@ import { metersAdvancedRouter } from "./routers/meters-advanced";
 import { workOrdersAdvancedRouter } from "./routers/work-orders-advanced";
 import { assetsAdvancedRouter } from "./routers/assets-advanced";
 import { monitoringAdvancedRouter } from "./routers/monitoring-advanced";
+// Phase 1 HR routers
+import { employeesRouter } from "./routers/employees";
+import { attendanceRouter } from "./routers/attendance";
+import { payrollRouter } from "./routers/payroll";
 
 export const appRouter = router({
     // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly
@@ -77,6 +81,11 @@ export const appRouter = router({
   workOrdersAdvanced: workOrdersAdvancedRouter,
   assetsAdvanced: assetsAdvancedRouter,
   monitoringAdvanced: monitoringAdvancedRouter,
+  
+  // Phase 1 HR routers - Human Resources
+  employees: employeesRouter,
+  attendance: attendanceRouter,
+  payroll: payrollRouter,
 });
 
 export type AppRouter = typeof appRouter;

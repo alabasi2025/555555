@@ -43,7 +43,10 @@ import {
   Gauge,
   ClipboardList,
   Wrench,
-  Activity
+  Activity,
+  UserCircle,
+  Clock,
+  Wallet
 } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
@@ -172,6 +175,28 @@ const phase1MenuItems = [
   },
 ];
 
+// المرحلة 1: الموارد البشرية
+const hrMenuItems = [
+  { 
+    icon: UserCircle, 
+    label: "إدارة الموظفين", 
+    path: "/hr/employees",
+    color: "text-indigo-500"
+  },
+  { 
+    icon: Clock, 
+    label: "الحضور والانصراف", 
+    path: "/hr/attendance",
+    color: "text-teal-500"
+  },
+  { 
+    icon: Wallet, 
+    label: "الرواتب", 
+    path: "/hr/payroll",
+    color: "text-green-600"
+  },
+];
+
 const SIDEBAR_WIDTH_KEY = "sidebar-width";
 const DEFAULT_WIDTH = 280;
 const MIN_WIDTH = 200;
@@ -262,7 +287,7 @@ function DashboardLayoutContent({
   const isCollapsed = state === "collapsed";
   const [isResizing, setIsResizing] = useState(false);
   const sidebarRef = useRef<HTMLDivElement>(null);
-  const allMenuItems = [...phase0MenuItems, ...phase1MenuItems];
+  const allMenuItems = [...phase0MenuItems, ...phase1MenuItems, ...hrMenuItems];
   const activeMenuItem = allMenuItems.find(item => item.path === location);
   const isMobile = useIsMobile();
 
@@ -367,6 +392,35 @@ function DashboardLayoutContent({
               <SidebarGroupContent>
                 <SidebarMenu className="px-2 py-1">
                   {phase1MenuItems.map(item => {
+                    const isActive = location === item.path;
+                    return (
+                      <SidebarMenuItem key={item.path}>
+                        <SidebarMenuButton
+                          isActive={isActive}
+                          onClick={() => setLocation(item.path)}
+                          tooltip={item.label}
+                          className={`h-10 transition-all font-normal`}
+                        >
+                          <item.icon
+                            className={`h-4 w-4 ${isActive ? item.color : "text-muted-foreground"}`}
+                          />
+                          <span>{item.label}</span>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    );
+                  })}
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+
+            {/* الموارد البشرية */}
+            <SidebarGroup>
+              <SidebarGroupLabel className="px-2 text-xs font-semibold text-muted-foreground">
+                الموارد البشرية
+              </SidebarGroupLabel>
+              <SidebarGroupContent>
+                <SidebarMenu className="px-2 py-1">
+                  {hrMenuItems.map(item => {
                     const isActive = location === item.path;
                     return (
                       <SidebarMenuItem key={item.path}>

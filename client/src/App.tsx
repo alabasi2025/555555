@@ -91,6 +91,11 @@ import UsersManagement from "./pages/users/UsersManagement";
 // Phase 1 - Monitoring
 import MonitoringDashboard from "./pages/monitoring/MonitoringDashboard";
 
+// Phase 1 - HR (Human Resources)
+import EmployeesList from "./pages/hr/employees/EmployeesList";
+import AttendanceManagement from "./pages/hr/attendance/AttendanceManagement";
+import PayrollManagement from "./pages/hr/payroll/PayrollManagement";
+
 function App() {
   return (
     <ErrorBoundary>
@@ -181,6 +186,11 @@ function App() {
             
             {/* Phase 1 - Monitoring */}
             <Route path="/monitoring" component={MonitoringDashboard} />
+            
+            {/* Phase 1 - HR (Human Resources) */}
+            <Route path="/hr/employees" component={EmployeesList} />
+            <Route path="/hr/attendance" component={AttendanceManagement} />
+            <Route path="/hr/payroll" component={PayrollManagement} />
             
             {/* 404 */}
             <Route component={NotFound} />

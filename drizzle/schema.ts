@@ -831,3 +831,11 @@ export type InsertKpiValue = typeof kpiValues.$inferInsert;
 
 export type RecentActivity = typeof recentActivities.$inferSelect;
 export type InsertRecentActivity = typeof recentActivities.$inferInsert;
+
+
+// ============================================
+// النظام 7: الموارد البشرية (HR System)
+// ============================================
+
+// استيراد جداول الموارد البشرية
+export * from './schema-hr';
