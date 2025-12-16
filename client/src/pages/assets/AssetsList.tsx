@@ -26,7 +26,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
-import { DashboardLayout } from '@/components/layout/DashboardLayout'; // افتراض توفر هذا المكون
+import DashboardLayout from '@/components/DashboardLayout'; // استخدام DashboardLayout
 import { Edit, Trash2, PlusCircle } from 'lucide-react';
 
 // 1. تعريف أنواع البيانات (Mock Data/Types)

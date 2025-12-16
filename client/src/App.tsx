@@ -83,6 +83,11 @@ import AssetsList from "./pages/assets/AssetsList";
 // Phase 1 - Maintenance
 import MaintenanceSchedule from "./pages/maintenance/MaintenanceSchedule";
 
+// Phase 1 Extended - Dashboard, Permissions, Users Management
+import DashboardNew from "./pages/DashboardNew";
+import PermissionsManagement from "./pages/permissions/PermissionsManagement";
+import UsersManagement from "./pages/users/UsersManagement";
+
 function App() {
   return (
     <ErrorBoundary>
@@ -93,7 +98,8 @@ function App() {
             {/* Main */}
             <Route path="/" component={Home} />
             <Route path="/login" component={SimpleLogin} />
-            <Route path="/dashboard" component={Dashboard} />
+            <Route path="/dashboard" component={DashboardNew} />
+            <Route path="/dashboard-old" component={Dashboard} />
             
             {/* Accounts */}
             <Route path="/accounts" component={AccountsList} />
@@ -153,7 +159,11 @@ function App() {
             
             {/* Phase 1 - Users & Roles */}
             <Route path="/users" component={UsersList} />
+            <Route path="/users/management" component={UsersManagement} />
             <Route path="/roles" component={RolesList} />
+            
+            {/* Phase 1 - Permissions Management */}
+            <Route path="/permissions" component={PermissionsManagement} />
             
             {/* Phase 1 - Subscriptions & Meters */}
             <Route path="/subscriptions" component={SubscriptionsList} />

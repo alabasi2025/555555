@@ -8,9 +8,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/components/ui/use-toast';
 // افتراض وجود هذا المكون في مسار مناسب
-import DashboardLayout from '@/components/layout/DashboardLayout'; 
+import DashboardLayout from '@/components/DashboardLayout'; 
 // افتراض وجود إعداد tRPC في هذا المسار
-import { api } from '@/utils/api'; 
+import { api } from '@/lib/trpc'; 
 
 // -----------------------------------------------------------------------------
 // 1. تعريف أنواع البيانات

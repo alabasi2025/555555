@@ -24,7 +24,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Search, Plus, Edit, Trash2 } from 'lucide-react';
-import DashboardLayout from '@/components/layouts/DashboardLayout'; // افتراض وجود هذا المكون
+import DashboardLayout from '@/components/DashboardLayout'; // استخدام DashboardLayout
 
 // 1. تعريف نوع البيانات (Type Definition)
 interface User {

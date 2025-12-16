@@ -13,7 +13,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { DashboardLayout } from '@/components/layout/DashboardLayout'; // افتراض وجود هذا المكون
+import DashboardLayout from '@/components/DashboardLayout'; // استخدام DashboardLayout
 
 // 1. تعريف نوع البيانات (Mock)
 interface Subscription {

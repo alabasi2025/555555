@@ -31,7 +31,7 @@ import {
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { DataTable } from "@/components/ui/data-table"; // افتراض وجود هذا المكون
-import { DashboardLayout } from "@/components/DashboardLayout"; // استخدام DashboardLayout
+import DashboardLayout from "@/components/DashboardLayout"; // استخدام DashboardLayout
 
 // افتراض وجود ملف trpc.ts في المسار الصحيح
 import { api } from "@/lib/trpc";
