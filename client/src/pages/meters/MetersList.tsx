@@ -10,7 +10,7 @@ import { useToast } from '@/components/ui/use-toast';
 // افتراض وجود هذا المكون في مسار مناسب
 import DashboardLayout from '@/components/DashboardLayout'; 
 // افتراض وجود إعداد tRPC في هذا المسار
-import { api } from '@/lib/trpc'; 
+import { trpc } from '@/lib/trpc'; 
 
 // -----------------------------------------------------------------------------
 // 1. تعريف أنواع البيانات
@@ -126,9 +126,9 @@ const MetersList: React.FC = () => {
 
   // 2. استخدام tRPC للاتصال بالـ API (Mock/Placeholder)
   // افتراض وجود hook لاسترجاع القائمة
-  const { data: meters, isLoading, refetch } = api.meter.list.useQuery();
+  const { data: meters, isLoading, refetch } = trpc.meter.list.useQuery();
   // افتراض وجود hook للحذف
-  const deleteMutation = api.meter.delete.useMutation({
+  const deleteMutation = trpc.meter.delete.useMutation({
     onSuccess: () => {
       toast({ title: 'نجاح', description: 'تم حذف العداد بنجاح.' });
       refetch();
@@ -138,7 +138,7 @@ const MetersList: React.FC = () => {
     },
   });
   // افتراض وجود hook للإضافة/التعديل
-  const saveMutation = api.meter.save.useMutation({
+  const saveMutation = trpc.meter.save.useMutation({
     onSuccess: () => {
       toast({ title: 'نجاح', description: 'تم حفظ بيانات العداد بنجاح.' });
       refetch();

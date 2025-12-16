@@ -88,6 +88,9 @@ import DashboardNew from "./pages/DashboardNew";
 import PermissionsManagement from "./pages/permissions/PermissionsManagement";
 import UsersManagement from "./pages/users/UsersManagement";
 
+// Phase 1 - Monitoring
+import MonitoringDashboard from "./pages/monitoring/MonitoringDashboard";
+
 function App() {
   return (
     <ErrorBoundary>
@@ -175,6 +178,9 @@ function App() {
             
             {/* Phase 1 - Maintenance */}
             <Route path="/maintenance" component={MaintenanceSchedule} />
+            
+            {/* Phase 1 - Monitoring */}
+            <Route path="/monitoring" component={MonitoringDashboard} />
             
             {/* 404 */}
             <Route component={NotFound} />

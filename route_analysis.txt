@@ -1,0 +1,29 @@
+# تحليل المسارات في التبويب الجانبي
+
+## المسارات في Sidebar:
+1. /dashboard ✅ (موجود في App.tsx)
+2. /accounts ✅ (موجود في App.tsx)
+3. /customers ✅ (موجود في App.tsx)
+4. /suppliers ✅ (موجود في App.tsx)
+5. /invoices ✅ (موجود في App.tsx)
+6. /payments ❌ (غير موجود - يوجد /payments/new و /invoices/payments)
+7. /inventory ✅ (موجود في App.tsx)
+8. /purchases ❌ (غير موجود - يوجد /purchases/requests)
+9. /reports ❌ (غير موجود - يوجد /reports/*)
+10. /journal-entries ✅ (موجود في App.tsx)
+11. /reconciliation ❌ (غير موجود - يوجد /journal-entries/reconciliation)
+12. /roles ✅ (موجود في App.tsx)
+13. /users ✅ (موجود في App.tsx)
+14. /subscriptions ✅ (موجود في App.tsx)
+15. /meters ✅ (موجود في App.tsx)
+16. /work-orders ✅ (موجود في App.tsx)
+17. /assets ✅ (موجود في App.tsx)
+18. /maintenance ✅ (موجود في App.tsx)
+19. /monitoring ❌ (غير موجود في App.tsx)
+
+## المسارات المفقودة التي تحتاج إصلاح:
+1. /payments - يجب إضافة صفحة أو تغيير المسار إلى /invoices/payments
+2. /purchases - يجب إضافة صفحة أو تغيير المسار إلى /purchases/requests
+3. /reports - يجب إضافة صفحة رئيسية للتقارير
+4. /reconciliation - يجب تغيير المسار إلى /journal-entries/reconciliation
+5. /monitoring - يجب إضافة صفحة المراقبة

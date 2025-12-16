@@ -85,7 +85,7 @@ const phase0MenuItems = [
   { 
     icon: CreditCard, 
     label: "المدفوعات", 
-    path: "/payments",
+    path: "/invoices/payments",
     color: "text-teal-500"
   },
   { 
@@ -97,13 +97,13 @@ const phase0MenuItems = [
   { 
     icon: ShoppingCart, 
     label: "المشتريات", 
-    path: "/purchases",
+    path: "/purchases/requests",
     color: "text-pink-500"
   },
   { 
     icon: BarChart3, 
     label: "التقارير المالية", 
-    path: "/reports",
+    path: "/reports/account-balances",
     color: "text-cyan-500"
   },
   { 
@@ -115,7 +115,7 @@ const phase0MenuItems = [
   { 
     icon: GitCompare, 
     label: "التسوية البنكية", 
-    path: "/reconciliation",
+    path: "/journal-entries/reconciliation",
     color: "text-lime-500"
   },
 ];
