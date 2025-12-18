@@ -27,7 +27,8 @@ export const attendanceRouter = router({
       location: z.string().optional(),
     }))
     .mutation(async ({ input }) => {
-      const db = getDb();
+      const db = await getDb();
+    if (!db) throw new Error("Database not available");
       const today = new Date();
       const dateStr = today.toISOString().split('T')[0];
       const timeStr = today.toTimeString().split(' ')[0];
@@ -71,7 +72,8 @@ export const attendanceRouter = router({
       location: z.string().optional(),
     }))
     .mutation(async ({ input }) => {
-      const db = getDb();
+      const db = await getDb();
+    if (!db) throw new Error("Database not available");
       const today = new Date();
       const dateStr = today.toISOString().split('T')[0];
       const timeStr = today.toTimeString().split(' ')[0];
@@ -127,7 +129,8 @@ export const attendanceRouter = router({
       endDate: z.string(),
     }))
     .query(async ({ input }) => {
-      const db = getDb();
+      const db = await getDb();
+    if (!db) throw new Error("Database not available");
       return await db.select().from(attendance)
         .where(and(
           eq(attendance.employeeId, input.employeeId),
@@ -138,7 +141,8 @@ export const attendanceRouter = router({
 
   // الحصول على حضور اليوم لجميع الموظفين
   getTodayAttendance: publicProcedure.query(async () => {
-    const db = getDb();
+    const db = await getDb();
+    if (!db) throw new Error("Database not available");
     const today = new Date().toISOString().split('T')[0];
     
     return await db.select({
@@ -158,7 +162,8 @@ export const attendanceRouter = router({
       month: z.number(),
     }))
     .query(async ({ input }) => {
-      const db = getDb();
+      const db = await getDb();
+    if (!db) throw new Error("Database not available");
       const startDate = new Date(input.year, input.month - 1, 1);
       const endDate = new Date(input.year, input.month, 0);
       
@@ -195,7 +200,8 @@ export const attendanceRouter = router({
   
   // الحصول على أوردية العمل
   getWorkShifts: publicProcedure.query(async () => {
-    const db = getDb();
+    const db = await getDb();
+    if (!db) throw new Error("Database not available");
     return await db.select().from(workShifts).where(eq(workShifts.isActive, true));
   }),
 
@@ -214,7 +220,8 @@ export const attendanceRouter = router({
       flexibleEndTime: z.string().optional(),
     }))
     .mutation(async ({ input }) => {
-      const db = getDb();
+      const db = await getDb();
+    if (!db) throw new Error("Database not available");
       const result = await db.insert(workShifts).values(input as any);
       return { success: true, id: result[0].insertId };
     }),
@@ -227,7 +234,8 @@ export const attendanceRouter = router({
   getEmployeeSchedule: publicProcedure
     .input(z.number())
     .query(async ({ input }) => {
-      const db = getDb();
+      const db = await getDb();
+    if (!db) throw new Error("Database not available");
       return await db.select({
         schedule: employeeSchedules,
         shift: workShifts,
@@ -247,7 +255,8 @@ export const attendanceRouter = router({
       effectiveTo: z.string().optional(),
     }))
     .mutation(async ({ input }) => {
-      const db = getDb();
+      const db = await getDb();
+    if (!db) throw new Error("Database not available");
       const result = await db.insert(employeeSchedules).values({
         ...input,
         effectiveFrom: new Date(input.effectiveFrom),
@@ -266,7 +275,8 @@ export const attendanceRouter = router({
       year: z.number().optional(),
     }).optional())
     .query(async ({ input }) => {
-      const db = getDb();
+      const db = await getDb();
+    if (!db) throw new Error("Database not available");
       const year = input?.year || new Date().getFullYear();
       return await db.select().from(holidays)
         .where(and(
@@ -285,7 +295,8 @@ export const attendanceRouter = router({
       isRecurring: z.boolean().optional(),
     }))
     .mutation(async ({ input }) => {
-      const db = getDb();
+      const db = await getDb();
+    if (!db) throw new Error("Database not available");
       const result = await db.insert(holidays).values({
         ...input,
         date: new Date(input.date),
@@ -308,7 +319,8 @@ export const attendanceRouter = router({
       notes: z.string().optional(),
     }))
     .mutation(async ({ input }) => {
-      const db = getDb();
+      const db = await getDb();
+    if (!db) throw new Error("Database not available");
       
       // التحقق من وجود سجل
       const existing = await db.select().from(attendance)
@@ -353,7 +365,8 @@ export const attendanceRouter = router({
   getDailyStats: publicProcedure
     .input(z.string().optional())
     .query(async ({ input }) => {
-      const db = getDb();
+      const db = await getDb();
+    if (!db) throw new Error("Database not available");
       const date = input || new Date().toISOString().split('T')[0];
       
       const [

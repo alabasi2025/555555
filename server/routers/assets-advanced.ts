@@ -220,7 +220,7 @@ export const assetsAdvancedRouter = router({
       installationDate: z.string().optional(),
       warrantyExpiry: z.string().optional(),
       purchasePrice: z.number(),
-      specifications: z.record(z.string()).optional(),
+      specifications: z.record(z.string(), z.string()).optional(),
       maintenanceInterval: z.number().optional(),
     }))
     .mutation(async ({ input }) => {

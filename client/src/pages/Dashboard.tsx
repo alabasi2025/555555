@@ -1,4 +1,3 @@
-import MainLayout from "@/components/layout/MainLayout";
 import DashboardLayout from "@/components/DashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link, useLocation } from "wouter";

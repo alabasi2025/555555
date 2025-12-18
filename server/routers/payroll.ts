@@ -28,7 +28,8 @@ export const payrollRouter = router({
       status: z.enum(['draft', 'processing', 'approved', 'paid', 'closed']).optional(),
     }).optional())
     .query(async ({ input }) => {
-      const db = getDb();
+      const db = await getDb();
+    if (!db) throw new Error("Database not available");
       let conditions = [];
       
       if (input?.year) {
@@ -56,7 +57,8 @@ export const payrollRouter = router({
       paymentDate: z.string().optional(),
     }))
     .mutation(async ({ input }) => {
-      const db = getDb();
+      const db = await getDb();
+    if (!db) throw new Error("Database not available");
       const result = await db.insert(payrollPeriods).values({
         ...input,
         startDate: new Date(input.startDate),
@@ -71,7 +73,8 @@ export const payrollRouter = router({
   getPeriodById: publicProcedure
     .input(z.number())
     .query(async ({ input }) => {
-      const db = getDb();
+      const db = await getDb();
+    if (!db) throw new Error("Database not available");
       const result = await db.select().from(payrollPeriods).where(eq(payrollPeriods.id, input));
       return result[0] || null;
     }),
@@ -87,7 +90,8 @@ export const payrollRouter = router({
       processedBy: z.number(),
     }))
     .mutation(async ({ input }) => {
-      const db = getDb();
+      const db = await getDb();
+    if (!db) throw new Error("Database not available");
       
       // الحصول على فترة الرواتب
       const period = await db.select().from(payrollPeriods).where(eq(payrollPeriods.id, input.periodId));
@@ -212,7 +216,8 @@ export const payrollRouter = router({
       approvedBy: z.number(),
     }))
     .mutation(async ({ input }) => {
-      const db = getDb();
+      const db = await getDb();
+    if (!db) throw new Error("Database not available");
       await db.update(payrollPeriods).set({
         status: 'approved',
         approvedBy: input.approvedBy,
@@ -228,7 +233,8 @@ export const payrollRouter = router({
       paymentDate: z.string(),
     }))
     .mutation(async ({ input }) => {
-      const db = getDb();
+      const db = await getDb();
+    if (!db) throw new Error("Database not available");
       
       // تحديث حالة جميع سجلات الرواتب
       await db.update(payroll).set({
@@ -253,7 +259,8 @@ export const payrollRouter = router({
   getPeriodPayroll: publicProcedure
     .input(z.number())
     .query(async ({ input }) => {
-      const db = getDb();
+      const db = await getDb();
+    if (!db) throw new Error("Database not available");
       return await db.select({
         payroll: payroll,
         employee: employees,
@@ -270,7 +277,8 @@ export const payrollRouter = router({
       year: z.number().optional(),
     }))
     .query(async ({ input }) => {
-      const db = getDb();
+      const db = await getDb();
+    if (!db) throw new Error("Database not available");
       
       let query = db.select({
         payroll: payroll,
@@ -279,14 +287,14 @@ export const payrollRouter = router({
         .leftJoin(payrollPeriods, eq(payroll.payrollPeriodId, payrollPeriods.id))
         .where(eq(payroll.employeeId, input.employeeId));
       
+      const result = await query.orderBy(desc(payrollPeriods.year), desc(payrollPeriods.month));
+      
+      // تصفية حسب السنة إذا تم تحديدها
       if (input.year) {
-        query = query.where(and(
-          eq(payroll.employeeId, input.employeeId),
-          eq(payrollPeriods.year, input.year)
-        )) as any;
+        return result.filter(r => r.period?.year === input.year);
       }
       
-      return await query.orderBy(desc(payrollPeriods.year), desc(payrollPeriods.month));
+      return result;
     }),
 
   // الحصول على كشف راتب
@@ -296,7 +304,8 @@ export const payrollRouter = router({
       periodId: z.number(),
     }))
     .query(async ({ input }) => {
-      const db = getDb();
+      const db = await getDb();
+    if (!db) throw new Error("Database not available");
       
       const [payrollRecord, employeeRecord, periodRecord] = await Promise.all([
         db.select().from(payroll)
@@ -323,7 +332,8 @@ export const payrollRouter = router({
   getEmployeeLoans: publicProcedure
     .input(z.number())
     .query(async ({ input }) => {
-      const db = getDb();
+      const db = await getDb();
+    if (!db) throw new Error("Database not available");
       return await db.select().from(employeeLoans)
         .where(eq(employeeLoans.employeeId, input))
         .orderBy(desc(employeeLoans.createdAt));
@@ -341,7 +351,8 @@ export const payrollRouter = router({
       reason: z.string().optional(),
     }))
     .mutation(async ({ input }) => {
-      const db = getDb();
+      const db = await getDb();
+    if (!db) throw new Error("Database not available");
       const result = await db.insert(employeeLoans).values({
         ...input,
         remainingAmount: input.amount,
@@ -358,7 +369,8 @@ export const payrollRouter = router({
       approvedBy: z.number(),
     }))
     .mutation(async ({ input }) => {
-      const db = getDb();
+      const db = await getDb();
+    if (!db) throw new Error("Database not available");
       await db.update(employeeLoans).set({
         status: 'active',
         approvedBy: input.approvedBy,
@@ -373,7 +385,8 @@ export const payrollRouter = router({
       id: z.number(),
     }))
     .mutation(async ({ input }) => {
-      const db = getDb();
+      const db = await getDb();
+    if (!db) throw new Error("Database not available");
       await db.update(employeeLoans).set({
         status: 'cancelled',
       }).where(eq(employeeLoans.id, input.id));
@@ -388,7 +401,8 @@ export const payrollRouter = router({
   getEmployeeBonuses: publicProcedure
     .input(z.number())
     .query(async ({ input }) => {
-      const db = getDb();
+      const db = await getDb();
+    if (!db) throw new Error("Database not available");
       return await db.select().from(employeeBonuses)
         .where(eq(employeeBonuses.employeeId, input))
         .orderBy(desc(employeeBonuses.effectiveDate));
@@ -405,7 +419,8 @@ export const payrollRouter = router({
       payrollPeriodId: z.number().optional(),
     }))
     .mutation(async ({ input }) => {
-      const db = getDb();
+      const db = await getDb();
+    if (!db) throw new Error("Database not available");
       const result = await db.insert(employeeBonuses).values({
         ...input,
         effectiveDate: new Date(input.effectiveDate),
@@ -421,7 +436,8 @@ export const payrollRouter = router({
       approvedBy: z.number(),
     }))
     .mutation(async ({ input }) => {
-      const db = getDb();
+      const db = await getDb();
+    if (!db) throw new Error("Database not available");
       await db.update(employeeBonuses).set({
         status: 'approved',
         approvedBy: input.approvedBy,
@@ -440,7 +456,8 @@ export const payrollRouter = router({
       year: z.number().optional(),
     }).optional())
     .query(async ({ input }) => {
-      const db = getDb();
+      const db = await getDb();
+    if (!db) throw new Error("Database not available");
       const year = input?.year || new Date().getFullYear();
       
       const periods = await db.select().from(payrollPeriods)
@@ -497,7 +514,8 @@ export const payrollRouter = router({
       month: z.number(),
     }))
     .query(async ({ input }) => {
-      const db = getDb();
+      const db = await getDb();
+    if (!db) throw new Error("Database not available");
       
       const period = await db.select().from(payrollPeriods)
         .where(and(

@@ -67,9 +67,7 @@ export const purchasesRouter = router({
       if (input?.status) {
         conditions.push(eq(purchaseRequests.status, input.status));
       }
-      if (input?.supplierId) {
-        conditions.push(eq(purchaseRequests.supplierId, input.supplierId));
-      }
+      // supplierId غير موجود في جدول purchaseRequests
 
       if (conditions.length > 0) {
         query = query.where(and(...conditions)) as any;
@@ -100,7 +98,7 @@ export const purchasesRouter = router({
       const requestItems = await db
         .select()
         .from(purchaseRequestItems)
-        .where(eq(purchaseRequestItems.purchaseRequestId, input.id));
+        .where(eq(purchaseRequestItems.requestId, input.id));
 
       return {
         ...result[0],
@@ -119,9 +117,11 @@ export const purchasesRouter = router({
 
       // إنشاء طلب الشراء
       const result = await db.insert(purchaseRequests).values({
-        ...requestData,
-        createdBy: ctx.user?.id || 1,
-        updatedBy: ctx.user?.id || 1,
+        requestNumber: requestData.requestNumber,
+        requestDate: new Date(requestData.requestDate),
+        status: requestData.status || "pending",
+        requestedBy: ctx.user?.id || 1,
+        notes: requestData.notes,
       });
 
       const purchaseRequestId = Number(result[0].insertId);
@@ -130,10 +130,11 @@ export const purchasesRouter = router({
       if (requestItems && requestItems.length > 0) {
         await db.insert(purchaseRequestItems).values(
           requestItems.map(item => ({
-            purchaseRequestId,
-            ...item,
-            createdBy: ctx.user?.id || 1,
-            updatedBy: ctx.user?.id || 1,
+            requestId: purchaseRequestId,
+            itemId: item.itemId,
+            quantity: String(item.quantity),
+            estimatedCost: String(item.unitPrice * item.quantity),
+            notes: item.notes,
           }))
         );
       }
@@ -156,8 +157,10 @@ export const purchasesRouter = router({
       await db
         .update(purchaseRequests)
         .set({
-          ...data,
-          updatedBy: ctx.user?.id || 1,
+          requestNumber: data.requestNumber,
+          requestDate: data.requestDate ? new Date(data.requestDate) : undefined,
+          status: data.status,
+          notes: data.notes,
         })
         .where(eq(purchaseRequests.id, id));
 
@@ -175,7 +178,8 @@ export const purchasesRouter = router({
         .update(purchaseRequests)
         .set({
           status: "approved",
-          updatedBy: ctx.user?.id || 1,
+          approvedBy: ctx.user?.id || 1,
+          approvalDate: new Date(),
         })
         .where(eq(purchaseRequests.id, input.id));
 
@@ -192,7 +196,7 @@ export const purchasesRouter = router({
       // حذف البنود أولاً
       await db
         .delete(purchaseRequestItems)
-        .where(eq(purchaseRequestItems.purchaseRequestId, input.id));
+        .where(eq(purchaseRequestItems.requestId, input.id));
 
       // ثم حذف الطلب
       await db
@@ -255,7 +259,7 @@ export const purchasesRouter = router({
       const receiptItems = await db
         .select()
         .from(materialReceiptItems)
-        .where(eq(materialReceiptItems.materialReceiptId, input.id));
+        .where(eq(materialReceiptItems.receiptId, input.id));
 
       return {
         ...result[0],
@@ -274,9 +278,11 @@ export const purchasesRouter = router({
 
       // إنشاء استلام المواد
       const result = await db.insert(materialReceipts).values({
-        ...receiptData,
-        createdBy: ctx.user?.id || 1,
-        updatedBy: ctx.user?.id || 1,
+        receiptNumber: receiptData.receiptNumber,
+        receiptDate: new Date(receiptData.receiptDate),
+        supplierId: receiptData.supplierId,
+        notes: receiptData.notes,
+        receivedBy: ctx.user?.id || 1,
       });
 
       const materialReceiptId = Number(result[0].insertId);
@@ -285,10 +291,11 @@ export const purchasesRouter = router({
       if (receiptItems && receiptItems.length > 0) {
         await db.insert(materialReceiptItems).values(
           receiptItems.map(item => ({
-            materialReceiptId,
-            ...item,
-            createdBy: ctx.user?.id || 1,
-            updatedBy: ctx.user?.id || 1,
+            receiptId: materialReceiptId,
+            itemId: item.itemId,
+            quantity: String(item.quantity),
+            unitCost: String(item.unitPrice),
+            totalCost: String(item.quantity * item.unitPrice),
           }))
         );
       }

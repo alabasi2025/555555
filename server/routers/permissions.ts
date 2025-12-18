@@ -132,10 +132,10 @@ export const permissionsRouter = router({
       // Get user counts for each role
       const result = await Promise.all(
         rolesList.map(async (role) => {
-          const [userCount] = await db!
-            .select({ count: count() })
-            .from(users)
-            .where(eq(users.role, role.name));
+          const allUsers = await db!
+            .select({ role: users.role })
+            .from(users);
+          const userCount = { count: allUsers.filter(u => u.role === role.name).length };
 
           return {
             id: role.id,

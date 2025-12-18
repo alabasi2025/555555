@@ -35,7 +35,8 @@ export const employeesRouter = router({
       employmentType: z.enum(['full_time', 'part_time', 'contract', 'temporary', 'intern']).optional(),
     }).optional())
     .query(async ({ input }) => {
-      const db = getDb();
+      const db = await getDb();
+    if (!db) throw new Error("Database not available");
       const { page = 1, limit = 20, search, departmentId, status, employmentType } = input || {};
       const offset = (page - 1) * limit;
       
@@ -88,7 +89,8 @@ export const employeesRouter = router({
   getById: publicProcedure
     .input(z.number())
     .query(async ({ input }) => {
-      const db = getDb();
+      const db = await getDb();
+    if (!db) throw new Error("Database not available");
       const result = await db.select().from(employees).where(eq(employees.id, input));
       return result[0] || null;
     }),
@@ -130,7 +132,8 @@ export const employeesRouter = router({
       taxNumber: z.string().optional(),
     }))
     .mutation(async ({ input }) => {
-      const db = getDb();
+      const db = await getDb();
+    if (!db) throw new Error("Database not available");
       const result = await db.insert(employees).values({
         ...input,
         dateOfBirth: input.dateOfBirth ? new Date(input.dateOfBirth) : null,
@@ -180,7 +183,8 @@ export const employeesRouter = router({
       })
     }))
     .mutation(async ({ input }) => {
-      const db = getDb();
+      const db = await getDb();
+    if (!db) throw new Error("Database not available");
       const updateData: any = { ...input.data };
       
       if (input.data.dateOfBirth) {
@@ -205,7 +209,8 @@ export const employeesRouter = router({
       terminationReason: z.string(),
     }))
     .mutation(async ({ input }) => {
-      const db = getDb();
+      const db = await getDb();
+    if (!db) throw new Error("Database not available");
       await db.update(employees).set({
         status: 'terminated',
         terminationDate: new Date(input.terminationDate),
@@ -220,7 +225,8 @@ export const employeesRouter = router({
   
   // الحصول على قائمة الأقسام
   getDepartments: publicProcedure.query(async () => {
-    const db = getDb();
+    const db = await getDb();
+    if (!db) throw new Error("Database not available");
     return await db.select().from(departments).where(eq(departments.isActive, true)).orderBy(asc(departments.nameAr));
   }),
 
@@ -235,7 +241,8 @@ export const employeesRouter = router({
       managerId: z.number().optional(),
     }))
     .mutation(async ({ input }) => {
-      const db = getDb();
+      const db = await getDb();
+    if (!db) throw new Error("Database not available");
       const result = await db.insert(departments).values(input as any);
       return { success: true, id: result[0].insertId };
     }),
@@ -246,7 +253,8 @@ export const employeesRouter = router({
   
   // الحصول على قائمة المناصب
   getPositions: publicProcedure.query(async () => {
-    const db = getDb();
+    const db = await getDb();
+    if (!db) throw new Error("Database not available");
     return await db.select().from(positions).where(eq(positions.isActive, true)).orderBy(asc(positions.titleAr));
   }),
 
@@ -263,7 +271,8 @@ export const employeesRouter = router({
       maxSalary: z.string().optional(),
     }))
     .mutation(async ({ input }) => {
-      const db = getDb();
+      const db = await getDb();
+    if (!db) throw new Error("Database not available");
       const result = await db.insert(positions).values(input as any);
       return { success: true, id: result[0].insertId };
     }),
@@ -274,7 +283,8 @@ export const employeesRouter = router({
   
   // الحصول على أنواع الإجازات
   getLeaveTypes: publicProcedure.query(async () => {
-    const db = getDb();
+    const db = await getDb();
+    if (!db) throw new Error("Database not available");
     return await db.select().from(leaveTypes).where(eq(leaveTypes.isActive, true));
   }),
 
@@ -285,7 +295,8 @@ export const employeesRouter = router({
       year: z.number().optional(),
     }))
     .query(async ({ input }) => {
-      const db = getDb();
+      const db = await getDb();
+    if (!db) throw new Error("Database not available");
       const year = input.year || new Date().getFullYear();
       return await db.select().from(leaveBalances)
         .where(and(
@@ -305,7 +316,8 @@ export const employeesRouter = router({
       reason: z.string().optional(),
     }))
     .mutation(async ({ input }) => {
-      const db = getDb();
+      const db = await getDb();
+    if (!db) throw new Error("Database not available");
       const result = await db.insert(leaves).values({
         ...input,
         startDate: new Date(input.startDate),
@@ -322,7 +334,8 @@ export const employeesRouter = router({
       approvedBy: z.number(),
     }))
     .mutation(async ({ input }) => {
-      const db = getDb();
+      const db = await getDb();
+    if (!db) throw new Error("Database not available");
       await db.update(leaves).set({
         status: 'approved',
         approvedBy: input.approvedBy,
@@ -339,7 +352,8 @@ export const employeesRouter = router({
       rejectionReason: z.string(),
     }))
     .mutation(async ({ input }) => {
-      const db = getDb();
+      const db = await getDb();
+    if (!db) throw new Error("Database not available");
       await db.update(leaves).set({
         status: 'rejected',
         approvedBy: input.approvedBy,
@@ -356,7 +370,8 @@ export const employeesRouter = router({
       status: z.enum(['pending', 'approved', 'rejected', 'cancelled']).optional(),
     }))
     .query(async ({ input }) => {
-      const db = getDb();
+      const db = await getDb();
+    if (!db) throw new Error("Database not available");
       let conditions = [eq(leaves.employeeId, input.employeeId)];
       if (input.status) {
         conditions.push(eq(leaves.status, input.status));
@@ -374,7 +389,8 @@ export const employeesRouter = router({
   getPerformanceReviews: publicProcedure
     .input(z.number())
     .query(async ({ input }) => {
-      const db = getDb();
+      const db = await getDb();
+    if (!db) throw new Error("Database not available");
       return await db.select().from(performanceReviews)
         .where(eq(performanceReviews.employeeId, input))
         .orderBy(desc(performanceReviews.reviewDate));
@@ -399,7 +415,8 @@ export const employeesRouter = router({
       reviewerComments: z.string().optional(),
     }))
     .mutation(async ({ input }) => {
-      const db = getDb();
+      const db = await getDb();
+    if (!db) throw new Error("Database not available");
       const result = await db.insert(performanceReviews).values({
         ...input,
         reviewDate: new Date(input.reviewDate),
@@ -414,7 +431,8 @@ export const employeesRouter = router({
   
   // الحصول على الدورات التدريبية
   getTrainingCourses: publicProcedure.query(async () => {
-    const db = getDb();
+    const db = await getDb();
+    if (!db) throw new Error("Database not available");
     return await db.select().from(trainingCourses).where(eq(trainingCourses.isActive, true));
   }),
 
@@ -427,7 +445,8 @@ export const employeesRouter = router({
       endDate: z.string().optional(),
     }))
     .mutation(async ({ input }) => {
-      const db = getDb();
+      const db = await getDb();
+    if (!db) throw new Error("Database not available");
       const result = await db.insert(trainingEnrollments).values({
         employeeId: input.employeeId,
         courseId: input.courseId,
@@ -443,7 +462,8 @@ export const employeesRouter = router({
   getEmployeeTraining: publicProcedure
     .input(z.number())
     .query(async ({ input }) => {
-      const db = getDb();
+      const db = await getDb();
+    if (!db) throw new Error("Database not available");
       return await db.select().from(trainingEnrollments)
         .where(eq(trainingEnrollments.employeeId, input))
         .orderBy(desc(trainingEnrollments.enrollmentDate));
@@ -455,7 +475,8 @@ export const employeesRouter = router({
   
   // إحصائيات الموظفين
   getStats: publicProcedure.query(async () => {
-    const db = getDb();
+    const db = await getDb();
+    if (!db) throw new Error("Database not available");
     
     const [
       totalEmployees,

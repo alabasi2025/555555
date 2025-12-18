@@ -7,68 +7,73 @@ import { eq } from "drizzle-orm";
 export const usersRouter = router({
   // Get all users
   list: publicProcedure.query(async () => {
-    const db = getDb();
+    const db = await getDb();
+    if (!db) throw new Error("Database not available");
     const allUsers = await db.select().from(users);
     return allUsers;
   }),
 
-  // Get role by ID
+  // Get user by ID
   getById: publicProcedure
-    .input(z.object({ id: z.string() }))
+    .input(z.object({ id: z.number().int().positive() }))
     .query(async ({ input }) => {
-      const db = getDb();
-      const [role] = await db.select().from(users).where(eq(users.id, input.id));
-      return role;
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+      const [user] = await db.select().from(users).where(eq(users.id, input.id));
+      return user;
     }),
 
-  // Create new role
+  // Create new user
   create: publicProcedure
     .input(
       z.object({
-        name: z.string(),
-        description: z.string().optional(),
-        permissions: z.array(z.string()).optional(),
+        openId: z.string(),
+        name: z.string().optional(),
+        email: z.string().optional(),
+        loginMethod: z.string().optional(),
+        role: z.enum(["user", "admin"]).optional(),
       })
     )
     .mutation(async ({ input }) => {
-      const db = getDb();
-      const [newRole] = await db.insert(users).values({
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+      const result = await db.insert(users).values({
+        openId: input.openId,
         name: input.name,
-        description: input.description,
-        permissions: input.permissions ? JSON.stringify(input.permissions) : null,
-      }).returning();
-      return newRole;
+        email: input.email,
+        loginMethod: input.loginMethod,
+        role: input.role || "user",
+      });
+      return { success: true, id: Number(result[0].insertId) };
     }),
 
-  // Update role
+  // Update user
   update: publicProcedure
     .input(
       z.object({
-        id: z.string(),
+        id: z.number().int().positive(),
         name: z.string().optional(),
-        description: z.string().optional(),
-        permissions: z.array(z.string()).optional(),
+        email: z.string().optional(),
+        role: z.enum(["user", "admin"]).optional(),
       })
     )
     .mutation(async ({ input }) => {
-      const db = getDb();
-      const [updatedRole] = await db
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+      const { id, ...data } = input;
+      await db
         .update(users)
-        .set({
-          name: input.name,
-          description: input.description,
-          permissions: input.permissions ? JSON.stringify(input.permissions) : undefined,
-        })
-        .where(eq(users.id, input.id))
-        .returning();
-      return updatedRole;
+        .set(data)
+        .where(eq(users.id, id));
+      return { success: true };
     }),
 
-  // Delete role
+  // Delete user
   delete: publicProcedure
-    .input(z.object({ id: z.string() }))
+    .input(z.object({ id: z.number().int().positive() }))
     .mutation(async ({ input }) => {
-      const db = getDb();
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
       await db.delete(users).where(eq(users.id, input.id));
       return { success: true };
     }),

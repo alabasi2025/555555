@@ -7,16 +7,18 @@ import { eq } from "drizzle-orm";
 export const rolesRouter = router({
   // Get all roles
   list: publicProcedure.query(async () => {
-    const db = getDb();
+    const db = await getDb();
+    if (!db) throw new Error("Database not available");
     const allRoles = await db.select().from(roles);
     return allRoles;
   }),
 
   // Get role by ID
   getById: publicProcedure
-    .input(z.object({ id: z.string() }))
+    .input(z.object({ id: z.number().int().positive() }))
     .query(async ({ input }) => {
-      const db = getDb();
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
       const [role] = await db.select().from(roles).where(eq(roles.id, input.id));
       return role;
     }),
@@ -27,48 +29,44 @@ export const rolesRouter = router({
       z.object({
         name: z.string(),
         description: z.string().optional(),
-        permissions: z.array(z.string()).optional(),
       })
     )
     .mutation(async ({ input }) => {
-      const db = getDb();
-      const [newRole] = await db.insert(roles).values({
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+      const result = await db.insert(roles).values({
         name: input.name,
         description: input.description,
-        permissions: input.permissions ? JSON.stringify(input.permissions) : null,
-      }).returning();
-      return newRole;
+      });
+      return { success: true, id: Number(result[0].insertId) };
     }),
 
   // Update role
   update: publicProcedure
     .input(
       z.object({
-        id: z.string(),
+        id: z.number().int().positive(),
         name: z.string().optional(),
         description: z.string().optional(),
-        permissions: z.array(z.string()).optional(),
       })
     )
     .mutation(async ({ input }) => {
-      const db = getDb();
-      const [updatedRole] = await db
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+      const { id, ...data } = input;
+      await db
         .update(roles)
-        .set({
-          name: input.name,
-          description: input.description,
-          permissions: input.permissions ? JSON.stringify(input.permissions) : undefined,
-        })
-        .where(eq(roles.id, input.id))
-        .returning();
-      return updatedRole;
+        .set(data)
+        .where(eq(roles.id, id));
+      return { success: true };
     }),
 
   // Delete role
   delete: publicProcedure
-    .input(z.object({ id: z.string() }))
+    .input(z.object({ id: z.number().int().positive() }))
     .mutation(async ({ input }) => {
-      const db = getDb();
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
       await db.delete(roles).where(eq(roles.id, input.id));
       return { success: true };
     }),

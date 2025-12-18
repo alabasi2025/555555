@@ -7,68 +7,90 @@ import { eq } from "drizzle-orm";
 export const assetsRouter = router({
   // Get all assets
   list: publicProcedure.query(async () => {
-    const db = getDb();
+    const db = await getDb();
+    if (!db) throw new Error("Database not available");
     const allAssets = await db.select().from(assets);
     return allAssets;
   }),
 
-  // Get role by ID
+  // Get asset by ID
   getById: publicProcedure
-    .input(z.object({ id: z.string() }))
+    .input(z.object({ id: z.number().int().positive() }))
     .query(async ({ input }) => {
-      const db = getDb();
-      const [role] = await db.select().from(assets).where(eq(assets.id, input.id));
-      return role;
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+      const [asset] = await db.select().from(assets).where(eq(assets.id, input.id));
+      return asset;
     }),
 
-  // Create new role
+  // Create new asset
   create: publicProcedure
     .input(
       z.object({
-        name: z.string(),
+        assetCode: z.string(),
+        assetName: z.string(),
+        category: z.string(),
         description: z.string().optional(),
-        permissions: z.array(z.string()).optional(),
+        purchaseDate: z.date().optional(),
+        purchasePrice: z.string().optional(),
+        currentValue: z.string().optional(),
+        location: z.string().optional(),
+        status: z.enum(["active", "under_maintenance", "retired", "disposed"]).optional(),
+        warrantyExpiry: z.date().optional(),
       })
     )
     .mutation(async ({ input }) => {
-      const db = getDb();
-      const [newRole] = await db.insert(assets).values({
-        name: input.name,
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+      const result = await db.insert(assets).values({
+        assetCode: input.assetCode,
+        assetName: input.assetName,
+        category: input.category,
         description: input.description,
-        permissions: input.permissions ? JSON.stringify(input.permissions) : null,
-      }).returning();
-      return newRole;
+        purchaseDate: input.purchaseDate,
+        purchasePrice: input.purchasePrice,
+        currentValue: input.currentValue,
+        location: input.location,
+        status: input.status || "active",
+        warrantyExpiry: input.warrantyExpiry,
+      });
+      return { success: true, id: Number(result[0].insertId) };
     }),
 
-  // Update role
+  // Update asset
   update: publicProcedure
     .input(
       z.object({
-        id: z.string(),
-        name: z.string().optional(),
+        id: z.number().int().positive(),
+        assetCode: z.string().optional(),
+        assetName: z.string().optional(),
+        category: z.string().optional(),
         description: z.string().optional(),
-        permissions: z.array(z.string()).optional(),
+        purchaseDate: z.date().optional(),
+        purchasePrice: z.string().optional(),
+        currentValue: z.string().optional(),
+        location: z.string().optional(),
+        status: z.enum(["active", "under_maintenance", "retired", "disposed"]).optional(),
+        warrantyExpiry: z.date().optional(),
       })
     )
     .mutation(async ({ input }) => {
-      const db = getDb();
-      const [updatedRole] = await db
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+      const { id, ...data } = input;
+      await db
         .update(assets)
-        .set({
-          name: input.name,
-          description: input.description,
-          permissions: input.permissions ? JSON.stringify(input.permissions) : undefined,
-        })
-        .where(eq(assets.id, input.id))
-        .returning();
-      return updatedRole;
+        .set(data)
+        .where(eq(assets.id, id));
+      return { success: true };
     }),
 
-  // Delete role
+  // Delete asset
   delete: publicProcedure
-    .input(z.object({ id: z.string() }))
+    .input(z.object({ id: z.number().int().positive() }))
     .mutation(async ({ input }) => {
-      const db = getDb();
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
       await db.delete(assets).where(eq(assets.id, input.id));
       return { success: true };
     }),

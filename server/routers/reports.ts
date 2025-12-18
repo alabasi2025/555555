@@ -129,19 +129,16 @@ export const reportsRouter = router({
         .from(payments)
         .where(
           and(
-            gte(payments.paymentDate, input.startDate),
-            lte(payments.paymentDate, input.endDate)
+            gte(payments.paymentDate, new Date(input.startDate)),
+            lte(payments.paymentDate, new Date(input.endDate))
           )
         );
 
-      // تصنيف التدفقات
+      // تصنيف التدفقات - جميع المدفوعات تعتبر تدفقات واردة (من العملاء)
       const cashInflows = allPayments
-        .filter(p => p.paymentType === "receipt")
         .reduce((sum, p) => sum + Number(p.amount), 0);
 
-      const cashOutflows = allPayments
-        .filter(p => p.paymentType === "payment")
-        .reduce((sum, p) => sum + Number(p.amount), 0);
+      const cashOutflows = 0; // سيتم تحديثه لاحقاً عند إضافة فواتير الموردين
 
       const netCashFlow = cashInflows - cashOutflows;
 
@@ -192,17 +189,18 @@ export const reportsRouter = router({
         .leftJoin(customers, eq(invoices.customerId, customers.id))
         .where(sql`${invoices.totalAmount} > ${invoices.paidAmount}`);
 
-      if (input?.customerId) {
-        query = query.where(eq(invoices.customerId, input.customerId)) as any;
-      }
-
       const result = await query;
+      
+      // تصفية حسب العميل إذا تم تحديده
+      const filteredResult = input?.customerId 
+        ? result.filter(inv => inv.customerId === input.customerId)
+        : result;
 
-      const totalReceivable = result.reduce((sum, inv) => sum + Number(inv.remainingAmount), 0);
+      const totalReceivable = filteredResult.reduce((sum, inv) => sum + Number(inv.remainingAmount), 0);
 
       return {
         asOfDate: input?.asOfDate || new Date().toISOString().split('T')[0],
-        invoices: result,
+        invoices: filteredResult,
         summary: {
           totalInvoices: result.length,
           totalReceivable,
@@ -252,26 +250,27 @@ export const reportsRouter = router({
         .from(generalLedger)
         .where(
           and(
-            gte(generalLedger.transactionDate, input.startDate),
-            lte(generalLedger.transactionDate, input.endDate)
+            gte(generalLedger.transactionDate, new Date(input.startDate)),
+            lte(generalLedger.transactionDate, new Date(input.endDate))
           )
         )
         .orderBy(desc(generalLedger.transactionDate));
 
-      if (input.accountId) {
-        query = query.where(eq(generalLedger.accountId, input.accountId)) as any;
-      }
-
       const result = await query;
+      
+      // تصفية حسب الحساب إذا تم تحديده
+      const filteredResult = input.accountId 
+        ? result.filter(entry => entry.accountId === input.accountId)
+        : result;
 
       return {
         period: {
           startDate: input.startDate,
           endDate: input.endDate,
         },
-        entries: result,
+        entries: filteredResult,
         summary: {
-          totalEntries: result.length,
+          totalEntries: filteredResult.length,
         },
       };
     }),
@@ -288,8 +287,8 @@ export const reportsRouter = router({
         .from(invoices)
         .where(
           and(
-            gte(invoices.invoiceDate, input.startDate),
-            lte(invoices.invoiceDate, input.endDate)
+            gte(invoices.invoiceDate, new Date(input.startDate)),
+            lte(invoices.invoiceDate, new Date(input.endDate))
           )
         );
 

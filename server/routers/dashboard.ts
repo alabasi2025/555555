@@ -120,7 +120,7 @@ export const dashboardRouter = router({
     const [inventoryStats] = await db
       .select({
         totalItems: count(),
-        totalValue: sum(sql`${items.currentQuantity} * ${items.unitPrice}`),
+        totalValue: sum(sql`${items.currentQuantity} * ${items.unitCost}`),
       })
       .from(items);
 
@@ -367,7 +367,7 @@ export const dashboardRouter = router({
       const result = await Promise.all(
         overdueInvoices.map(async (invoice) => {
           const [customer] = await db!
-            .select({ name: customers.name })
+            .select({ name: customers.customerName })
             .from(customers)
             .where(eq(customers.id, invoice.customerId))
             .limit(1);
@@ -420,7 +420,7 @@ export const dashboardRouter = router({
         .where(and(
           gte(maintenanceSchedules.nextMaintenanceDate, today),
           lte(maintenanceSchedules.nextMaintenanceDate, futureDate),
-          eq(maintenanceSchedules.isActive, true)
+          eq(maintenanceSchedules.status, "scheduled")
         ))
         .orderBy(maintenanceSchedules.nextMaintenanceDate)
         .limit(limit);
@@ -429,7 +429,7 @@ export const dashboardRouter = router({
       const result = await Promise.all(
         upcoming.map(async (schedule) => {
           const [asset] = await db!
-            .select({ name: assets.name })
+            .select({ name: assets.assetName })
             .from(assets)
             .where(eq(assets.id, schedule.assetId))
             .limit(1);
@@ -464,7 +464,7 @@ export const dashboardRouter = router({
       const lowStock = await db
         .select({
           id: items.id,
-          itemName: items.name,
+          itemName: items.itemName,
           currentQuantity: items.currentQuantity,
           minQuantity: items.minQuantity,
         })

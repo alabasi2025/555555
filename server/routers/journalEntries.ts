@@ -93,7 +93,7 @@ export const journalEntriesRouter = router({
         })
         .from(journalEntryLines)
         .leftJoin(chartOfAccounts, eq(journalEntryLines.accountId, chartOfAccounts.id))
-        .where(eq(journalEntryLines.journalEntryId, input.id));
+        .where(eq(journalEntryLines.entryId, input.id));
 
       // حساب المجاميع
       const totalDebit = entryLines.reduce((sum, line) => sum + Number(line.debitAmount), 0);
@@ -137,9 +137,11 @@ export const journalEntriesRouter = router({
 
       // إنشاء القيد اليومي
       const result = await db.insert(journalEntries).values({
-        ...entryData,
+        entryNumber: entryData.entryNumber,
+        entryDate: new Date(entryData.entryDate),
+        description: entryData.description,
+        status: entryData.status || "draft",
         createdBy: ctx.user?.id || 1,
-        updatedBy: ctx.user?.id || 1,
       });
 
       const journalEntryId = Number(result[0].insertId);
@@ -147,11 +149,13 @@ export const journalEntriesRouter = router({
       // إضافة بنود القيد
       if (lines && lines.length > 0) {
         await db.insert(journalEntryLines).values(
-          lines.map(line => ({
-            journalEntryId,
-            ...line,
-            createdBy: ctx.user?.id || 1,
-            updatedBy: ctx.user?.id || 1,
+          lines.map((line, index) => ({
+            entryId: journalEntryId,
+            lineNumber: index + 1,
+            accountId: line.accountId,
+            description: line.description,
+            debitAmount: String(line.debitAmount || 0),
+            creditAmount: String(line.creditAmount || 0),
           }))
         );
       }
@@ -190,8 +194,10 @@ export const journalEntriesRouter = router({
       await db
         .update(journalEntries)
         .set({
-          ...data,
-          updatedBy: ctx.user?.id || 1,
+          entryNumber: data.entryNumber,
+          entryDate: data.entryDate ? new Date(data.entryDate) : undefined,
+          description: data.description,
+          status: data.status,
         })
         .where(eq(journalEntries.id, id));
 
@@ -226,20 +232,17 @@ export const journalEntriesRouter = router({
       const lines = await db
         .select()
         .from(journalEntryLines)
-        .where(eq(journalEntryLines.journalEntryId, input.id));
+        .where(eq(journalEntryLines.entryId, input.id));
 
       // ترحيل البنود إلى دفتر الأستاذ
       for (const line of lines) {
         await db.insert(generalLedger).values({
           accountId: line.accountId,
           transactionDate: entry[0].entryDate,
+          entryId: input.id,
           description: line.description || entry[0].description,
-          referenceType: "journal_entry",
-          referenceId: input.id,
           debitAmount: line.debitAmount,
           creditAmount: line.creditAmount,
-          createdBy: ctx.user?.id || 1,
-          updatedBy: ctx.user?.id || 1,
         });
       }
 
@@ -248,7 +251,8 @@ export const journalEntriesRouter = router({
         .update(journalEntries)
         .set({
           status: "posted",
-          updatedBy: ctx.user?.id || 1,
+          postedDate: new Date(),
+          postedBy: ctx.user?.id || 1,
         })
         .where(eq(journalEntries.id, input.id));
 
@@ -288,30 +292,29 @@ export const journalEntriesRouter = router({
       const originalLines = await db
         .select()
         .from(journalEntryLines)
-        .where(eq(journalEntryLines.journalEntryId, input.id));
+        .where(eq(journalEntryLines.entryId, input.id));
 
       // إنشاء قيد عكسي
       const reversalResult = await db.insert(journalEntries).values({
         entryNumber: `REV-${originalEntry[0].entryNumber}`,
-        entryDate: input.reversalDate,
+        entryDate: new Date(input.reversalDate),
         description: input.description,
-        referenceNumber: `عكس قيد ${originalEntry[0].entryNumber}`,
         status: "posted",
+        postedDate: new Date(),
+        postedBy: ctx.user?.id || 1,
         createdBy: ctx.user?.id || 1,
-        updatedBy: ctx.user?.id || 1,
       });
 
       const reversalEntryId = Number(reversalResult[0].insertId);
 
       // إضافة بنود القيد العكسي (عكس المدين والدائن)
-      const reversalLines = originalLines.map(line => ({
-        journalEntryId: reversalEntryId,
+      const reversalLines = originalLines.map((line, index) => ({
+        entryId: reversalEntryId,
+        lineNumber: index + 1,
         accountId: line.accountId,
         description: `عكس: ${line.description || ''}`,
         debitAmount: line.creditAmount,  // عكس
         creditAmount: line.debitAmount,  // عكس
-        createdBy: ctx.user?.id || 1,
-        updatedBy: ctx.user?.id || 1,
       }));
 
       await db.insert(journalEntryLines).values(reversalLines);
@@ -320,14 +323,11 @@ export const journalEntriesRouter = router({
       for (const line of reversalLines) {
         await db.insert(generalLedger).values({
           accountId: line.accountId,
-          transactionDate: input.reversalDate,
+          transactionDate: new Date(input.reversalDate),
+          entryId: reversalEntryId,
           description: line.description,
-          referenceType: "journal_entry",
-          referenceId: reversalEntryId,
           debitAmount: line.debitAmount,
           creditAmount: line.creditAmount,
-          createdBy: ctx.user?.id || 1,
-          updatedBy: ctx.user?.id || 1,
         });
       }
 
@@ -336,7 +336,6 @@ export const journalEntriesRouter = router({
         .update(journalEntries)
         .set({
           status: "reversed",
-          updatedBy: ctx.user?.id || 1,
         })
         .where(eq(journalEntries.id, input.id));
 
@@ -397,7 +396,7 @@ export const journalEntriesRouter = router({
       // حذف البنود أولاً
       await db
         .delete(journalEntryLines)
-        .where(eq(journalEntryLines.journalEntryId, input.id));
+        .where(eq(journalEntryLines.entryId, input.id));
 
       // ثم حذف القيد
       await db
