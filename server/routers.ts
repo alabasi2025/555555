@@ -42,6 +42,11 @@ import { inventoryCountsRouter } from "./routers/inventory-counts";
 import { ticketsRouter } from "./routers/tickets";
 import { customerPortalRouter } from "./routers/customer-portal";
 import { fieldOperationsRouter } from "./routers/field-operations";
+// Phase 2 routers - Testing, Security, Documentation, Settings
+import { testingRouter } from "./routers/testing";
+import { securityRouter } from "./routers/security";
+import { documentationRouter } from "./routers/documentation";
+import { settingsRouter } from "./routers/settings";
 
 export const appRouter = router({
     // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly
@@ -103,6 +108,12 @@ export const appRouter = router({
   tickets: ticketsRouter,
   customerPortal: customerPortalRouter,
   fieldOperations: fieldOperationsRouter,
+  
+  // Phase 2 routers - Testing, Security, Documentation, Settings
+  testing: testingRouter,
+  security: securityRouter,
+  documentation: documentationRouter,
+  settings: settingsRouter,
 });
 
 export type AppRouter = typeof appRouter;

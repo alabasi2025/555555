@@ -105,6 +105,12 @@ import TicketsList from "./pages/tickets/TicketsList";
 import CustomerPortalDashboard from "./pages/customer-portal/CustomerPortalDashboard";
 import FieldOperationsList from "./pages/field-operations/FieldOperationsList";
 
+// Phase 2 - Testing, Security, Documentation, Settings
+import TestingDashboard from "./pages/testing/TestingDashboard";
+import SecurityDashboard from "./pages/security/SecurityDashboard";
+import DocumentationDashboard from "./pages/documentation/DocumentationDashboard";
+import SettingsDashboard from "./pages/settings/SettingsDashboard";
+
 function App() {
   return (
     <ErrorBoundary>
@@ -210,6 +216,12 @@ function App() {
             <Route path="/tickets" component={TicketsList} />
             <Route path="/customer-portal" component={CustomerPortalDashboard} />
             <Route path="/field-operations" component={FieldOperationsList} />
+            
+            {/* Phase 2 - Testing, Security, Documentation, Settings */}
+            <Route path="/testing" component={TestingDashboard} />
+            <Route path="/security" component={SecurityDashboard} />
+            <Route path="/documentation" component={DocumentationDashboard} />
+            <Route path="/settings" component={SettingsDashboard} />
             
             {/* 404 */}
             <Route component={NotFound} />

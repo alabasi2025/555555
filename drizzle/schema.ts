@@ -844,3 +844,6 @@ export * from './schema-hr';
 // المرحلة 1: الأنظمة المتقدمة
 // ============================================
 export * from './schema-phase1';
+
+// Phase 2: Testing, Security, Documentation
+export * from "./schema-phase2";
