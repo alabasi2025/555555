@@ -851,3 +851,6 @@ export * from "./schema-phase2";
 // Phase 3: Advanced Systems
 export * from "./schema-phase3";
 
+
+// Phase 4: Field Operations, Assets & Maintenance
+export * from "./schema-phase4";

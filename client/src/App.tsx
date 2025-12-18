@@ -118,6 +118,13 @@ import DebtManagementDashboard from "./pages/debt-management/DebtManagementDashb
 import AdvancedReportsDashboard from "./pages/advanced-reports/AdvancedReportsDashboard";
 import AdvancedInventoryDashboard from "./pages/advanced-inventory/AdvancedInventoryDashboard";
 
+// Phase 4 - Field Operations, Assets & Maintenance
+import FieldOperationsAdvancedDashboard from "./pages/field-operations-advanced/FieldOperationsAdvancedDashboard";
+import MaterialsEquipmentDashboard from "./pages/materials-equipment/MaterialsEquipmentDashboard";
+import InspectionsDashboard from "./pages/inspections/InspectionsDashboard";
+import AssetsManagementDashboard from "./pages/assets-management/AssetsManagementDashboard";
+import MaintenanceAdvancedDashboard from "./pages/maintenance-advanced/MaintenanceAdvancedDashboard";
+
 function App() {
   return (
     <ErrorBoundary>
@@ -236,6 +243,13 @@ function App() {
             <Route path="/debt-management" component={DebtManagementDashboard} />
             <Route path="/advanced-reports" component={AdvancedReportsDashboard} />
             <Route path="/advanced-inventory" component={AdvancedInventoryDashboard} />
+            
+            {/* Phase 4 - Field Operations, Assets & Maintenance */}
+            <Route path="/field-operations-advanced" component={FieldOperationsAdvancedDashboard} />
+            <Route path="/materials-equipment" component={MaterialsEquipmentDashboard} />
+            <Route path="/inspections" component={InspectionsDashboard} />
+            <Route path="/assets-management" component={AssetsManagementDashboard} />
+            <Route path="/maintenance-advanced" component={MaintenanceAdvancedDashboard} />
             
             {/* 404 */}
             <Route component={NotFound} />
