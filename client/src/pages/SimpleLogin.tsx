@@ -20,13 +20,18 @@ export default function SimpleLogin() {
   useEffect(() => {
     const savedCredentials = localStorage.getItem("remembered-credentials");
     const sessionExpiry = localStorage.getItem("session-expiry");
+    const isAuthenticated = localStorage.getItem("demo-authenticated");
     
-    // التحقق من صلاحية الجلسة
-    if (sessionExpiry && new Date().getTime() < parseInt(sessionExpiry)) {
-      const isAuthenticated = localStorage.getItem("demo-authenticated");
-      if (isAuthenticated === "true") {
+    // التحقق من صلاحية الجلسة - توجيه المستخدم المسجل إلى لوحة التحكم
+    if (isAuthenticated === "true") {
+      if (sessionExpiry && new Date().getTime() < parseInt(sessionExpiry)) {
         setLocation("/dashboard");
         return;
+      } else {
+        // انتهت صلاحية الجلسة، حذف بيانات المصادقة
+        localStorage.removeItem("demo-authenticated");
+        localStorage.removeItem("demo-user");
+        localStorage.removeItem("session-expiry");
       }
     }
     

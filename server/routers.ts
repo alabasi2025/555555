@@ -34,6 +34,14 @@ import { monitoringAdvancedRouter } from "./routers/monitoring-advanced";
 import { employeesRouter } from "./routers/employees";
 import { attendanceRouter } from "./routers/attendance";
 import { payrollRouter } from "./routers/payroll";
+// Phase 1 Complete - Advanced Systems
+import { warehousesRouter } from "./routers/warehouses";
+import { recurringInvoicesRouter } from "./routers/recurring-invoices";
+import { discountsRouter } from "./routers/discounts";
+import { inventoryCountsRouter } from "./routers/inventory-counts";
+import { ticketsRouter } from "./routers/tickets";
+import { customerPortalRouter } from "./routers/customer-portal";
+import { fieldOperationsRouter } from "./routers/field-operations";
 
 export const appRouter = router({
     // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly
@@ -86,6 +94,15 @@ export const appRouter = router({
   employees: employeesRouter,
   attendance: attendanceRouter,
   payroll: payrollRouter,
+  
+  // Phase 1 Complete - Advanced Systems
+  warehouses: warehousesRouter,
+  recurringInvoices: recurringInvoicesRouter,
+  discounts: discountsRouter,
+  inventoryCounts: inventoryCountsRouter,
+  tickets: ticketsRouter,
+  customerPortal: customerPortalRouter,
+  fieldOperations: fieldOperationsRouter,
 });
 
 export type AppRouter = typeof appRouter;

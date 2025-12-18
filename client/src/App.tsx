@@ -96,6 +96,15 @@ import EmployeesList from "./pages/hr/employees/EmployeesList";
 import AttendanceManagement from "./pages/hr/attendance/AttendanceManagement";
 import PayrollManagement from "./pages/hr/payroll/PayrollManagement";
 
+// Phase 1 Complete - Advanced Systems
+import WarehousesList from "./pages/warehouses/WarehousesList";
+import RecurringInvoicesList from "./pages/recurring-invoices/RecurringInvoicesList";
+import DiscountsList from "./pages/discounts/DiscountsList";
+import InventoryCountsList from "./pages/inventory-counts/InventoryCountsList";
+import TicketsList from "./pages/tickets/TicketsList";
+import CustomerPortalDashboard from "./pages/customer-portal/CustomerPortalDashboard";
+import FieldOperationsList from "./pages/field-operations/FieldOperationsList";
+
 function App() {
   return (
     <ErrorBoundary>
@@ -104,8 +113,9 @@ function App() {
           <Toaster />
           <Switch>
             {/* Main */}
-            <Route path="/" component={Home} />
+            <Route path="/" component={SimpleLogin} />
             <Route path="/login" component={SimpleLogin} />
+            <Route path="/home" component={Home} />
             <Route path="/dashboard" component={DashboardNew} />
             <Route path="/dashboard-old" component={Dashboard} />
             
@@ -191,6 +201,15 @@ function App() {
             <Route path="/hr/employees" component={EmployeesList} />
             <Route path="/hr/attendance" component={AttendanceManagement} />
             <Route path="/hr/payroll" component={PayrollManagement} />
+            
+            {/* Phase 1 Complete - Advanced Systems */}
+            <Route path="/warehouses" component={WarehousesList} />
+            <Route path="/recurring-invoices" component={RecurringInvoicesList} />
+            <Route path="/discounts" component={DiscountsList} />
+            <Route path="/inventory-counts" component={InventoryCountsList} />
+            <Route path="/tickets" component={TicketsList} />
+            <Route path="/customer-portal" component={CustomerPortalDashboard} />
+            <Route path="/field-operations" component={FieldOperationsList} />
             
             {/* 404 */}
             <Route component={NotFound} />

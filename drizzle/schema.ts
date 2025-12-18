@@ -839,3 +839,8 @@ export type InsertRecentActivity = typeof recentActivities.$inferInsert;
 
 // استيراد جداول الموارد البشرية
 export * from './schema-hr';
+
+// ============================================
+// المرحلة 1: الأنظمة المتقدمة
+// ============================================
+export * from './schema-phase1';
