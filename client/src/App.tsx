@@ -111,6 +111,13 @@ import SecurityDashboard from "./pages/security/SecurityDashboard";
 import DocumentationDashboard from "./pages/documentation/DocumentationDashboard";
 import SettingsDashboard from "./pages/settings/SettingsDashboard";
 
+// Phase 3 - Advanced Systems
+import AdvancedBillingDashboard from "./pages/advanced-billing/AdvancedBillingDashboard";
+import AdvancedCollectionDashboard from "./pages/advanced-collection/AdvancedCollectionDashboard";
+import DebtManagementDashboard from "./pages/debt-management/DebtManagementDashboard";
+import AdvancedReportsDashboard from "./pages/advanced-reports/AdvancedReportsDashboard";
+import AdvancedInventoryDashboard from "./pages/advanced-inventory/AdvancedInventoryDashboard";
+
 function App() {
   return (
     <ErrorBoundary>
@@ -222,6 +229,13 @@ function App() {
             <Route path="/security" component={SecurityDashboard} />
             <Route path="/documentation" component={DocumentationDashboard} />
             <Route path="/settings" component={SettingsDashboard} />
+            
+            {/* Phase 3 - Advanced Systems */}
+            <Route path="/advanced-billing" component={AdvancedBillingDashboard} />
+            <Route path="/advanced-collection" component={AdvancedCollectionDashboard} />
+            <Route path="/debt-management" component={DebtManagementDashboard} />
+            <Route path="/advanced-reports" component={AdvancedReportsDashboard} />
+            <Route path="/advanced-inventory" component={AdvancedInventoryDashboard} />
             
             {/* 404 */}
             <Route component={NotFound} />

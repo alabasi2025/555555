@@ -847,3 +847,7 @@ export * from './schema-phase1';
 
 // Phase 2: Testing, Security, Documentation
 export * from "./schema-phase2";
+
+// Phase 3: Advanced Systems
+export * from "./schema-phase3";
+

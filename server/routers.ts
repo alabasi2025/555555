@@ -47,6 +47,12 @@ import { testingRouter } from "./routers/testing";
 import { securityRouter } from "./routers/security";
 import { documentationRouter } from "./routers/documentation";
 import { settingsRouter } from "./routers/settings";
+// Phase 3 routers - Advanced Systems
+import { advancedBillingRouter } from "./routers/advanced-billing";
+import { advancedCollectionRouter } from "./routers/advanced-collection";
+import { debtManagementRouter } from "./routers/debt-management";
+import { advancedReportsRouter } from "./routers/advanced-reports";
+import { advancedInventoryRouter } from "./routers/advanced-inventory";
 
 export const appRouter = router({
     // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly
@@ -114,6 +120,13 @@ export const appRouter = router({
   security: securityRouter,
   documentation: documentationRouter,
   settings: settingsRouter,
+  
+  // Phase 3 routers - Advanced Systems
+  advancedBilling: advancedBillingRouter,
+  advancedCollection: advancedCollectionRouter,
+  debtManagement: debtManagementRouter,
+  advancedReports: advancedReportsRouter,
+  advancedInventory: advancedInventoryRouter,
 });
 
 export type AppRouter = typeof appRouter;
