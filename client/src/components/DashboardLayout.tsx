@@ -38,7 +38,6 @@ import {
   BookOpen,
   GitCompare,
   Shield,
-  Key,
   Calendar,
   Gauge,
   ClipboardList,
@@ -47,275 +46,343 @@ import {
   UserCircle,
   Clock,
   Wallet,
-  Settings,
-  HelpCircle,
-  Bell,
   Database,
-  Server,
-  Upload,
   RefreshCw,
   HeartPulse,
   FileQuestion,
   Rocket,
-  MessageSquare
+  MessageSquare,
+  Zap,
+  Home,
+  UserCog,
+  Receipt,
+  Banknote,
+  Calculator,
+  Boxes,
+  Truck,
+  HardDrive,
+  Settings2,
+  CalendarClock,
+  Headphones,
+  BookMarked,
+  MonitorCheck,
+  ChevronDown,
+  ChevronLeft
 } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
 import { DashboardLayoutSkeleton } from './DashboardLayoutSkeleton';
 import { Button } from "./ui/button";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 
 // ==========================================
-// تعريف مجموعات القائمة الجانبية بترتيب منظم
+// تعريف مجموعات القائمة الجانبية المحسنة
 // ==========================================
 
-// 1. لوحة التحكم الرئيسية
-const dashboardItems = [
-  { 
-    icon: LayoutDashboard, 
-    label: "لوحة التحكم", 
-    path: "/dashboard",
-    color: "text-blue-500"
-  },
-];
+interface MenuItem {
+  icon: any;
+  label: string;
+  path: string;
+  color: string;
+  badge?: string;
+}
 
-// 2. إدارة العملاء والموردين
-const crmItems = [
-  { 
-    icon: Users, 
-    label: "إدارة العملاء", 
-    path: "/customers",
-    color: "text-purple-500"
-  },
-  { 
-    icon: Building2, 
-    label: "إدارة الموردين", 
-    path: "/suppliers",
-    color: "text-orange-500"
-  },
-  { 
-    icon: Calendar, 
-    label: "الاشتراكات", 
-    path: "/subscriptions",
-    color: "text-rose-500"
-  },
-];
+interface MenuGroup {
+  title: string;
+  icon: any;
+  color: string;
+  items: MenuItem[];
+  defaultOpen?: boolean;
+}
 
-// 3. العدادات والقراءات
-const metersItems = [
-  { 
-    icon: Gauge, 
-    label: "العدادات", 
-    path: "/meters",
-    color: "text-sky-500"
+// تعريف المجموعات المحسنة
+const menuGroups: MenuGroup[] = [
+  {
+    title: "الرئيسية",
+    icon: Home,
+    color: "text-blue-500",
+    defaultOpen: true,
+    items: [
+      { 
+        icon: LayoutDashboard, 
+        label: "لوحة التحكم", 
+        path: "/dashboard",
+        color: "text-blue-500"
+      },
+    ],
   },
-  { 
-    icon: Activity, 
-    label: "القراءات", 
-    path: "/readings",
-    color: "text-cyan-500"
+  {
+    title: "إدارة العملاء",
+    icon: Users,
+    color: "text-purple-500",
+    defaultOpen: true,
+    items: [
+      { 
+        icon: Users, 
+        label: "العملاء", 
+        path: "/customers",
+        color: "text-purple-500"
+      },
+      { 
+        icon: Building2, 
+        label: "الموردين", 
+        path: "/suppliers",
+        color: "text-orange-500"
+      },
+      { 
+        icon: Calendar, 
+        label: "الاشتراكات", 
+        path: "/subscriptions",
+        color: "text-rose-500"
+      },
+    ],
   },
-];
-
-// 4. الفواتير والمدفوعات
-const billingItems = [
-  { 
-    icon: FileText, 
-    label: "الفواتير", 
-    path: "/invoices",
-    color: "text-red-500"
+  {
+    title: "العدادات",
+    icon: Gauge,
+    color: "text-cyan-500",
+    defaultOpen: true,
+    items: [
+      { 
+        icon: Gauge, 
+        label: "إدارة العدادات", 
+        path: "/meters",
+        color: "text-cyan-500"
+      },
+      { 
+        icon: Activity, 
+        label: "القراءات", 
+        path: "/readings",
+        color: "text-teal-500"
+      },
+    ],
   },
-  { 
-    icon: CreditCard, 
-    label: "المدفوعات", 
-    path: "/invoices/payments",
-    color: "text-teal-500"
+  {
+    title: "الفوترة",
+    icon: Receipt,
+    color: "text-red-500",
+    defaultOpen: true,
+    items: [
+      { 
+        icon: FileText, 
+        label: "الفواتير", 
+        path: "/invoices",
+        color: "text-red-500"
+      },
+      { 
+        icon: Banknote, 
+        label: "المدفوعات", 
+        path: "/invoices/payments",
+        color: "text-green-500"
+      },
+    ],
   },
-];
-
-// 5. المحاسبة والمالية
-const accountingItems = [
-  { 
-    icon: BookOpen, 
-    label: "شجرة الحسابات", 
-    path: "/accounts",
-    color: "text-green-500"
+  {
+    title: "المحاسبة",
+    icon: Calculator,
+    color: "text-emerald-500",
+    defaultOpen: false,
+    items: [
+      { 
+        icon: BookOpen, 
+        label: "شجرة الحسابات", 
+        path: "/accounts",
+        color: "text-emerald-500"
+      },
+      { 
+        icon: BookMarked, 
+        label: "القيود المحاسبية", 
+        path: "/journal-entries",
+        color: "text-amber-500"
+      },
+      { 
+        icon: GitCompare, 
+        label: "التسوية البنكية", 
+        path: "/journal-entries/reconciliation",
+        color: "text-lime-500"
+      },
+      { 
+        icon: BarChart3, 
+        label: "التقارير المالية", 
+        path: "/reports/account-balances",
+        color: "text-indigo-500"
+      },
+    ],
   },
-  { 
-    icon: BookOpen, 
-    label: "القيود المحاسبية", 
-    path: "/journal-entries",
-    color: "text-amber-500"
+  {
+    title: "المخزون",
+    icon: Boxes,
+    color: "text-indigo-500",
+    defaultOpen: false,
+    items: [
+      { 
+        icon: Package, 
+        label: "إدارة المخزون", 
+        path: "/inventory",
+        color: "text-indigo-500"
+      },
+      { 
+        icon: Truck, 
+        label: "المشتريات", 
+        path: "/purchases/requests",
+        color: "text-pink-500"
+      },
+    ],
   },
-  { 
-    icon: GitCompare, 
-    label: "التسوية البنكية", 
-    path: "/journal-entries/reconciliation",
-    color: "text-lime-500"
+  {
+    title: "الأصول والصيانة",
+    icon: HardDrive,
+    color: "text-yellow-500",
+    defaultOpen: false,
+    items: [
+      { 
+        icon: HardDrive, 
+        label: "الأصول", 
+        path: "/assets",
+        color: "text-yellow-500"
+      },
+      { 
+        icon: ClipboardList, 
+        label: "أوامر العمل", 
+        path: "/work-orders",
+        color: "text-emerald-500"
+      },
+      { 
+        icon: Wrench, 
+        label: "الصيانة", 
+        path: "/maintenance",
+        color: "text-gray-500"
+      },
+      { 
+        icon: CalendarClock, 
+        label: "نوافذ الصيانة", 
+        path: "/maintenance-windows",
+        color: "text-orange-500"
+      },
+    ],
   },
-  { 
-    icon: BarChart3, 
-    label: "التقارير المالية", 
-    path: "/reports/account-balances",
-    color: "text-indigo-500"
+  {
+    title: "الموارد البشرية",
+    icon: UserCog,
+    color: "text-violet-500",
+    defaultOpen: false,
+    items: [
+      { 
+        icon: UserCircle, 
+        label: "الموظفين", 
+        path: "/hr/employees",
+        color: "text-violet-500"
+      },
+      { 
+        icon: Clock, 
+        label: "الحضور والانصراف", 
+        path: "/hr/attendance",
+        color: "text-teal-500"
+      },
+      { 
+        icon: Wallet, 
+        label: "الرواتب", 
+        path: "/hr/payroll",
+        color: "text-green-600"
+      },
+    ],
   },
-];
-
-// 6. المخزون والمشتريات
-const inventoryItems = [
-  { 
-    icon: Package, 
-    label: "المخزون", 
-    path: "/inventory",
-    color: "text-indigo-500"
+  {
+    title: "النشر والتحديثات",
+    icon: Rocket,
+    color: "text-purple-500",
+    defaultOpen: false,
+    items: [
+      { 
+        icon: Rocket, 
+        label: "إدارة النشر", 
+        path: "/deployment",
+        color: "text-purple-500"
+      },
+      { 
+        icon: Database, 
+        label: "هجرة البيانات", 
+        path: "/data-migration",
+        color: "text-blue-500"
+      },
+      { 
+        icon: RefreshCw, 
+        label: "التحديثات", 
+        path: "/system-updates",
+        color: "text-green-500"
+      },
+    ],
   },
-  { 
-    icon: ShoppingCart, 
-    label: "المشتريات", 
-    path: "/purchases/requests",
-    color: "text-pink-500"
+  {
+    title: "الدعم الفني",
+    icon: Headphones,
+    color: "text-blue-500",
+    defaultOpen: false,
+    items: [
+      { 
+        icon: MessageSquare, 
+        label: "تذاكر الدعم", 
+        path: "/support-tickets",
+        color: "text-blue-500"
+      },
+      { 
+        icon: FileQuestion, 
+        label: "قاعدة المعرفة", 
+        path: "/knowledge-base",
+        color: "text-amber-500"
+      },
+    ],
   },
-];
-
-// 7. الأصول والصيانة
-const assetsItems = [
-  { 
-    icon: Package, 
-    label: "الأصول", 
-    path: "/assets",
-    color: "text-yellow-500"
+  {
+    title: "المراقبة",
+    icon: MonitorCheck,
+    color: "text-red-500",
+    defaultOpen: false,
+    items: [
+      { 
+        icon: HeartPulse, 
+        label: "صحة النظام", 
+        path: "/system-health",
+        color: "text-red-500"
+      },
+      { 
+        icon: Activity, 
+        label: "مراقبة الأداء", 
+        path: "/monitoring",
+        color: "text-blue-600"
+      },
+    ],
   },
-  { 
-    icon: ClipboardList, 
-    label: "أوامر العمل", 
-    path: "/work-orders",
-    color: "text-emerald-500"
+  {
+    title: "الإعدادات",
+    icon: Settings2,
+    color: "text-gray-500",
+    defaultOpen: false,
+    items: [
+      { 
+        icon: Shield, 
+        label: "الأدوار والصلاحيات", 
+        path: "/roles",
+        color: "text-violet-500"
+      },
+      { 
+        icon: Users, 
+        label: "المستخدمين", 
+        path: "/users",
+        color: "text-fuchsia-500"
+      },
+    ],
   },
-  { 
-    icon: Wrench, 
-    label: "الصيانة", 
-    path: "/maintenance",
-    color: "text-gray-500"
-  },
-  { 
-    icon: Calendar, 
-    label: "نوافذ الصيانة", 
-    path: "/maintenance-windows",
-    color: "text-orange-500"
-  },
-];
-
-// 8. الموارد البشرية
-const hrItems = [
-  { 
-    icon: UserCircle, 
-    label: "إدارة الموظفين", 
-    path: "/hr/employees",
-    color: "text-indigo-500"
-  },
-  { 
-    icon: Clock, 
-    label: "الحضور والانصراف", 
-    path: "/hr/attendance",
-    color: "text-teal-500"
-  },
-  { 
-    icon: Wallet, 
-    label: "الرواتب", 
-    path: "/hr/payroll",
-    color: "text-green-600"
-  },
-];
-
-// 9. النشر والتحديثات
-const deploymentItems = [
-  { 
-    icon: Rocket, 
-    label: "إدارة النشر", 
-    path: "/deployment",
-    color: "text-purple-500"
-  },
-  { 
-    icon: Database, 
-    label: "هجرة البيانات", 
-    path: "/data-migration",
-    color: "text-blue-500"
-  },
-  { 
-    icon: RefreshCw, 
-    label: "التحديثات", 
-    path: "/system-updates",
-    color: "text-green-500"
-  },
-];
-
-// 10. الدعم الفني
-const supportItems = [
-  { 
-    icon: MessageSquare, 
-    label: "تذاكر الدعم", 
-    path: "/support-tickets",
-    color: "text-blue-500"
-  },
-  { 
-    icon: FileQuestion, 
-    label: "قاعدة المعرفة", 
-    path: "/knowledge-base",
-    color: "text-amber-500"
-  },
-];
-
-// 11. المراقبة والنظام
-const monitoringItems = [
-  { 
-    icon: HeartPulse, 
-    label: "صحة النظام", 
-    path: "/system-health",
-    color: "text-red-500"
-  },
-  { 
-    icon: Activity, 
-    label: "المراقبة", 
-    path: "/monitoring",
-    color: "text-blue-600"
-  },
-];
-
-// 12. الإدارة والإعدادات
-const adminItems = [
-  { 
-    icon: Shield, 
-    label: "الأدوار والصلاحيات", 
-    path: "/roles",
-    color: "text-violet-500"
-  },
-  { 
-    icon: Users, 
-    label: "إدارة المستخدمين", 
-    path: "/users",
-    color: "text-fuchsia-500"
-  },
-];
-
-// تعريف المجموعات مع عناوينها
-const menuGroups = [
-  { title: "الرئيسية", items: dashboardItems },
-  { title: "العملاء والموردين", items: crmItems },
-  { title: "العدادات والقراءات", items: metersItems },
-  { title: "الفواتير والمدفوعات", items: billingItems },
-  { title: "المحاسبة والمالية", items: accountingItems },
-  { title: "المخزون والمشتريات", items: inventoryItems },
-  { title: "الأصول والصيانة", items: assetsItems },
-  { title: "الموارد البشرية", items: hrItems },
-  { title: "النشر والتحديثات", items: deploymentItems },
-  { title: "الدعم الفني", items: supportItems },
-  { title: "المراقبة والنظام", items: monitoringItems },
-  { title: "الإدارة والإعدادات", items: adminItems },
 ];
 
 const SIDEBAR_WIDTH_KEY = "sidebar-width";
 const DEFAULT_WIDTH = 280;
-const MIN_WIDTH = 200;
-const MAX_WIDTH = 480;
+const MIN_WIDTH = 220;
+const MAX_WIDTH = 400;
 
 export default function DashboardLayout({
   children,
@@ -350,11 +417,14 @@ export default function DashboardLayout({
 
   if (!user) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="flex flex-col items-center gap-8 p-8 max-w-md w-full">
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
+        <div className="flex flex-col items-center gap-8 p-8 max-w-md w-full bg-white dark:bg-gray-800 rounded-2xl shadow-xl">
           <div className="flex flex-col items-center gap-6">
-            <h1 className="text-2xl font-semibold tracking-tight text-center">
-              تسجيل الدخول للمتابعة
+            <div className="h-16 w-16 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
+              <Zap className="h-8 w-8 text-white" />
+            </div>
+            <h1 className="text-2xl font-bold tracking-tight text-center text-gray-900 dark:text-white">
+              نظام إدارة محطات الكهرباء
             </h1>
             <p className="text-sm text-muted-foreground text-center max-w-sm">
               الوصول إلى لوحة التحكم يتطلب المصادقة. انقر للمتابعة.
@@ -365,7 +435,7 @@ export default function DashboardLayout({
               window.location.href = "/login";
             }}
             size="lg"
-            className="w-full shadow-lg hover:shadow-xl transition-all"
+            className="w-full shadow-lg hover:shadow-xl transition-all bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700"
           >
             تسجيل الدخول
           </Button>
@@ -404,11 +474,27 @@ function DashboardLayoutContent({
   const isCollapsed = state === "collapsed";
   const [isResizing, setIsResizing] = useState(false);
   const sidebarRef = useRef<HTMLDivElement>(null);
+  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>(() => {
+    const initial: Record<string, boolean> = {};
+    menuGroups.forEach((group, index) => {
+      initial[index.toString()] = group.defaultOpen ?? false;
+    });
+    return initial;
+  });
   
   // جمع كل العناصر للبحث عن العنصر النشط
   const allMenuItems = menuGroups.flatMap(group => group.items);
   const activeMenuItem = allMenuItems.find(item => item.path === location);
   const isMobile = useIsMobile();
+
+  // فتح المجموعة التي تحتوي على الصفحة النشطة
+  useEffect(() => {
+    menuGroups.forEach((group, index) => {
+      if (group.items.some(item => item.path === location)) {
+        setOpenGroups(prev => ({ ...prev, [index.toString()]: true }));
+      }
+    });
+  }, [location]);
 
   useEffect(() => {
     if (isCollapsed) {
@@ -446,82 +532,129 @@ function DashboardLayoutContent({
     };
   }, [isResizing, setSidebarWidth]);
 
+  const toggleGroup = (index: string) => {
+    setOpenGroups(prev => ({ ...prev, [index]: !prev[index] }));
+  };
+
   return (
     <>
       <div className="relative" ref={sidebarRef}>
         <Sidebar
           collapsible="icon"
-          className="border-r-0"
+          className="border-r border-border/50"
           disableTransition={isResizing}
         >
-          <SidebarHeader className="h-16 justify-center">
-            <div className="flex items-center gap-3 px-2 transition-all w-full">
+          {/* Header */}
+          <SidebarHeader className="h-16 border-b border-border/50">
+            <div className="flex items-center gap-3 px-3 transition-all w-full h-full">
               <button
                 onClick={toggleSidebar}
-                className="h-8 w-8 flex items-center justify-center hover:bg-accent rounded-lg transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-ring shrink-0"
+                className="h-9 w-9 flex items-center justify-center hover:bg-accent rounded-lg transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-ring shrink-0"
                 aria-label="Toggle navigation"
               >
-                <PanelLeft className="h-4 w-4 text-muted-foreground" />
+                <PanelLeft className="h-5 w-5 text-muted-foreground" />
               </button>
-              {!isCollapsed ? (
+              {!isCollapsed && (
                 <div className="flex items-center gap-2 min-w-0">
-                  <span className="font-semibold tracking-tight truncate">
-                    نظام إدارة محطات الكهرباء
+                  <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shrink-0">
+                    <Zap className="h-4 w-4 text-white" />
+                  </div>
+                  <span className="font-bold text-sm tracking-tight truncate">
+                    محطات الكهرباء
                   </span>
                 </div>
-              ) : null}
+              )}
             </div>
           </SidebarHeader>
 
-          <SidebarContent className="gap-0">
-            {menuGroups.map((group, groupIndex) => (
-              <SidebarGroup key={groupIndex}>
-                <SidebarGroupLabel className="px-2 text-xs font-semibold text-muted-foreground">
-                  {group.title}
-                </SidebarGroupLabel>
-                <SidebarGroupContent>
-                  <SidebarMenu className="px-2 py-1">
-                    {group.items.map((item, itemIndex) => {
-                      const isActive = location === item.path;
-                      return (
-                        <SidebarMenuItem key={`${groupIndex}-${itemIndex}-${item.path}`}>
-                          <SidebarMenuButton
-                            isActive={isActive}
-                            onClick={() => setLocation(item.path)}
-                            tooltip={item.label}
-                            className="h-10 transition-all font-normal"
-                          >
-                            <item.icon
-                              className={`h-4 w-4 ${isActive ? item.color : "text-muted-foreground"}`}
+          {/* Content */}
+          <SidebarContent className="gap-1 p-2">
+            {menuGroups.map((group, groupIndex) => {
+              const isOpen = openGroups[groupIndex.toString()];
+              const hasActiveItem = group.items.some(item => item.path === location);
+              
+              return (
+                <Collapsible
+                  key={groupIndex}
+                  open={isOpen}
+                  onOpenChange={() => toggleGroup(groupIndex.toString())}
+                >
+                  <SidebarGroup className="p-0">
+                    <CollapsibleTrigger asChild>
+                      <button
+                        className={`flex items-center gap-2 w-full px-3 py-2.5 rounded-lg text-sm font-medium transition-all hover:bg-accent/50 ${
+                          hasActiveItem ? 'bg-accent/30 text-foreground' : 'text-muted-foreground'
+                        }`}
+                      >
+                        <group.icon className={`h-4 w-4 ${hasActiveItem ? group.color : ''}`} />
+                        {!isCollapsed && (
+                          <>
+                            <span className="flex-1 text-right">{group.title}</span>
+                            <ChevronDown 
+                              className={`h-4 w-4 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} 
                             />
-                            <span>{item.label}</span>
-                          </SidebarMenuButton>
-                        </SidebarMenuItem>
-                      );
-                    })}
-                  </SidebarMenu>
-                </SidebarGroupContent>
-              </SidebarGroup>
-            ))}
+                          </>
+                        )}
+                      </button>
+                    </CollapsibleTrigger>
+                    
+                    <CollapsibleContent className="mt-1">
+                      <SidebarGroupContent>
+                        <SidebarMenu className="gap-0.5">
+                          {group.items.map((item, itemIndex) => {
+                            const isActive = location === item.path;
+                            return (
+                              <SidebarMenuItem key={`${groupIndex}-${itemIndex}`}>
+                                <SidebarMenuButton
+                                  isActive={isActive}
+                                  onClick={() => setLocation(item.path)}
+                                  tooltip={item.label}
+                                  className={`h-9 transition-all font-normal rounded-lg mx-1 ${
+                                    isActive 
+                                      ? 'bg-primary/10 text-primary font-medium' 
+                                      : 'hover:bg-accent/50'
+                                  }`}
+                                >
+                                  <item.icon
+                                    className={`h-4 w-4 ${isActive ? item.color : "text-muted-foreground"}`}
+                                  />
+                                  <span className={isActive ? 'text-foreground' : ''}>{item.label}</span>
+                                  {isActive && (
+                                    <div className="mr-auto h-1.5 w-1.5 rounded-full bg-primary" />
+                                  )}
+                                </SidebarMenuButton>
+                              </SidebarMenuItem>
+                            );
+                          })}
+                        </SidebarMenu>
+                      </SidebarGroupContent>
+                    </CollapsibleContent>
+                  </SidebarGroup>
+                </Collapsible>
+              );
+            })}
           </SidebarContent>
 
-          <SidebarFooter className="p-3">
+          {/* Footer */}
+          <SidebarFooter className="p-3 border-t border-border/50">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="flex items-center gap-3 rounded-lg px-1 py-1 hover:bg-accent/50 transition-colors w-full text-left group-data-[collapsible=icon]:justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-ring">
-                  <Avatar className="h-9 w-9 border shrink-0">
-                    <AvatarFallback className="text-xs font-medium">
+                <button className="flex items-center gap-3 rounded-lg px-2 py-2 hover:bg-accent/50 transition-colors w-full text-left group-data-[collapsible=icon]:justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                  <Avatar className="h-9 w-9 border-2 border-primary/20 shrink-0">
+                    <AvatarFallback className="text-xs font-bold bg-gradient-to-br from-blue-500 to-indigo-600 text-white">
                       {user?.name?.charAt(0).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
-                  <div className="flex-1 min-w-0 group-data-[collapsible=icon]:hidden">
-                    <p className="text-sm font-medium truncate leading-none">
-                      {user?.name || "-"}
-                    </p>
-                    <p className="text-xs text-muted-foreground truncate mt-1.5">
-                      مدير النظام
-                    </p>
-                  </div>
+                  {!isCollapsed && (
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-semibold truncate leading-none">
+                        {user?.name || "-"}
+                      </p>
+                      <p className="text-xs text-muted-foreground truncate mt-1">
+                        مدير النظام
+                      </p>
+                    </div>
+                  )}
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48">
@@ -536,8 +669,10 @@ function DashboardLayoutContent({
             </DropdownMenu>
           </SidebarFooter>
         </Sidebar>
+        
+        {/* Resize Handle */}
         <div
-          className={`absolute top-0 right-0 w-1 h-full cursor-col-resize hover:bg-primary/20 transition-colors ${isCollapsed ? "hidden" : ""}`}
+          className={`absolute top-0 right-0 w-1 h-full cursor-col-resize hover:bg-primary/30 transition-colors ${isCollapsed ? "hidden" : ""}`}
           onMouseDown={() => {
             if (isCollapsed) return;
             setIsResizing(true);
@@ -548,20 +683,21 @@ function DashboardLayoutContent({
 
       <SidebarInset>
         {isMobile && (
-          <div className="flex border-b h-14 items-center justify-between bg-background/95 px-2 backdrop-blur supports-[backdrop-filter]:backdrop-blur sticky top-0 z-40">
-            <div className="flex items-center gap-2">
-              <SidebarTrigger className="h-9 w-9 rounded-lg bg-background" />
-              <div className="flex items-center gap-3">
-                <div className="flex flex-col gap-1">
-                  <span className="tracking-tight text-foreground">
-                    {activeMenuItem?.label ?? "القائمة"}
-                  </span>
+          <div className="flex border-b h-14 items-center justify-between bg-background/95 px-3 backdrop-blur supports-[backdrop-filter]:backdrop-blur sticky top-0 z-40">
+            <div className="flex items-center gap-3">
+              <SidebarTrigger className="h-9 w-9 rounded-lg bg-background border" />
+              <div className="flex items-center gap-2">
+                <div className="h-7 w-7 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
+                  <Zap className="h-3.5 w-3.5 text-white" />
                 </div>
+                <span className="font-semibold text-sm">
+                  {activeMenuItem?.label ?? "القائمة"}
+                </span>
               </div>
             </div>
           </div>
         )}
-        <main className="flex-1 p-4">{children}</main>
+        <main className="flex-1 p-4 bg-muted/30">{children}</main>
       </SidebarInset>
     </>
   );
