@@ -1,10 +1,13 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 
-type Theme = "light" | "dark";
+type ThemeMode = "light" | "dark" | "system";
+type ActualTheme = "light" | "dark";
 
 interface ThemeContextType {
-  theme: Theme;
-  toggleTheme?: () => void;
+  theme: ThemeMode;
+  actualTheme: ActualTheme;
+  toggleTheme: () => void;
+  setTheme: (theme: ThemeMode) => void;
   switchable: boolean;
 }
 
@@ -12,44 +15,77 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 interface ThemeProviderProps {
   children: React.ReactNode;
-  defaultTheme?: Theme;
+  defaultTheme?: ThemeMode;
   switchable?: boolean;
 }
 
 export function ThemeProvider({
   children,
-  defaultTheme = "light",
-  switchable = false,
+  defaultTheme = "system",
+  switchable = true,
 }: ThemeProviderProps) {
-  const [theme, setTheme] = useState<Theme>(() => {
+  const [theme, setThemeState] = useState<ThemeMode>(() => {
     if (switchable) {
       const stored = localStorage.getItem("theme");
-      return (stored as Theme) || defaultTheme;
+      return (stored as ThemeMode) || defaultTheme;
     }
     return defaultTheme;
   });
 
+  const [actualTheme, setActualTheme] = useState<ActualTheme>("light");
+
+  // تحديد الوضع الفعلي بناءً على إعدادات النظام
+  useEffect(() => {
+    const updateActualTheme = () => {
+      if (theme === "system") {
+        const systemPrefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+        setActualTheme(systemPrefersDark ? "dark" : "light");
+      } else {
+        setActualTheme(theme as ActualTheme);
+      }
+    };
+
+    updateActualTheme();
+
+    // الاستماع لتغييرات إعدادات النظام
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+    const handleChange = () => {
+      if (theme === "system") {
+        updateActualTheme();
+      }
+    };
+
+    mediaQuery.addEventListener("change", handleChange);
+    return () => mediaQuery.removeEventListener("change", handleChange);
+  }, [theme]);
+
+  // تطبيق الوضع على العنصر الجذر
   useEffect(() => {
     const root = document.documentElement;
-    if (theme === "dark") {
+    if (actualTheme === "dark") {
       root.classList.add("dark");
+      root.style.colorScheme = "dark";
     } else {
       root.classList.remove("dark");
+      root.style.colorScheme = "light";
     }
 
     if (switchable) {
       localStorage.setItem("theme", theme);
     }
-  }, [theme, switchable]);
+  }, [actualTheme, theme, switchable]);
 
-  const toggleTheme = switchable
-    ? () => {
-        setTheme(prev => (prev === "light" ? "dark" : "light"));
-      }
-    : undefined;
+  const setTheme = (newTheme: ThemeMode) => {
+    setThemeState(newTheme);
+  };
+
+  const toggleTheme = () => {
+    const newTheme = actualTheme === "light" ? "dark" : "light";
+    setThemeState(newTheme);
+  };
 
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme, switchable }}>
+    <ThemeContext.Provider value={{ theme, actualTheme, toggleTheme, setTheme, switchable }}>
       {children}
     </ThemeContext.Provider>
   );
