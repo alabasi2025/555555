@@ -134,6 +134,9 @@ import MaintenanceWindowsPage from "./pages/maintenance/MaintenanceWindowsPage";
 import SystemUpdatesPage from "./pages/maintenance/SystemUpdatesPage";
 import SystemHealthPage from "./pages/monitoring/SystemHealthPage";
 
+// Profile
+import ProfilePage from "./pages/profile/ProfilePage";
+
 function App() {
   return (
     <ErrorBoundary>
@@ -147,6 +150,7 @@ function App() {
             <Route path="/home" component={Home} />
             <Route path="/dashboard" component={DashboardNew} />
             <Route path="/dashboard-old" component={Dashboard} />
+            <Route path="/profile" component={ProfilePage} />
             
             {/* Accounts */}
             <Route path="/accounts" component={AccountsList} />
