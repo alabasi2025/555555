@@ -46,27 +46,40 @@ import {
   Activity,
   UserCircle,
   Clock,
-  Wallet
+  Wallet,
+  Settings,
+  HelpCircle,
+  Bell,
+  Database,
+  Server,
+  Upload,
+  RefreshCw,
+  HeartPulse,
+  FileQuestion,
+  Rocket,
+  MessageSquare
 } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
 import { DashboardLayoutSkeleton } from './DashboardLayoutSkeleton';
 import { Button } from "./ui/button";
 
-// المرحلة 0: الأنظمة الأساسية
-const phase0MenuItems = [
+// ==========================================
+// تعريف مجموعات القائمة الجانبية بترتيب منظم
+// ==========================================
+
+// 1. لوحة التحكم الرئيسية
+const dashboardItems = [
   { 
     icon: LayoutDashboard, 
     label: "لوحة التحكم", 
     path: "/dashboard",
     color: "text-blue-500"
   },
-  { 
-    icon: BookOpen, 
-    label: "شجرة الحسابات", 
-    path: "/accounts",
-    color: "text-green-500"
-  },
+];
+
+// 2. إدارة العملاء والموردين
+const crmItems = [
   { 
     icon: Users, 
     label: "إدارة العملاء", 
@@ -80,6 +93,32 @@ const phase0MenuItems = [
     color: "text-orange-500"
   },
   { 
+    icon: Calendar, 
+    label: "الاشتراكات", 
+    path: "/subscriptions",
+    color: "text-rose-500"
+  },
+];
+
+// 3. العدادات والقراءات
+const metersItems = [
+  { 
+    icon: Gauge, 
+    label: "العدادات", 
+    path: "/meters",
+    color: "text-sky-500"
+  },
+  { 
+    icon: Activity, 
+    label: "القراءات", 
+    path: "/readings",
+    color: "text-cyan-500"
+  },
+];
+
+// 4. الفواتير والمدفوعات
+const billingItems = [
+  { 
     icon: FileText, 
     label: "الفواتير", 
     path: "/invoices",
@@ -91,23 +130,15 @@ const phase0MenuItems = [
     path: "/invoices/payments",
     color: "text-teal-500"
   },
+];
+
+// 5. المحاسبة والمالية
+const accountingItems = [
   { 
-    icon: Package, 
-    label: "المخزون", 
-    path: "/inventory",
-    color: "text-indigo-500"
-  },
-  { 
-    icon: ShoppingCart, 
-    label: "المشتريات", 
-    path: "/purchases/requests",
-    color: "text-pink-500"
-  },
-  { 
-    icon: BarChart3, 
-    label: "التقارير المالية", 
-    path: "/reports/account-balances",
-    color: "text-cyan-500"
+    icon: BookOpen, 
+    label: "شجرة الحسابات", 
+    path: "/accounts",
+    color: "text-green-500"
   },
   { 
     icon: BookOpen, 
@@ -121,33 +152,37 @@ const phase0MenuItems = [
     path: "/journal-entries/reconciliation",
     color: "text-lime-500"
   },
+  { 
+    icon: BarChart3, 
+    label: "التقارير المالية", 
+    path: "/reports/account-balances",
+    color: "text-indigo-500"
+  },
 ];
 
-// المرحلة 1: الأنظمة المتقدمة
-const phase1MenuItems = [
+// 6. المخزون والمشتريات
+const inventoryItems = [
   { 
-    icon: Shield, 
-    label: "الأدوار والصلاحيات", 
-    path: "/roles",
-    color: "text-violet-500"
+    icon: Package, 
+    label: "المخزون", 
+    path: "/inventory",
+    color: "text-indigo-500"
   },
   { 
-    icon: Users, 
-    label: "إدارة المستخدمين", 
-    path: "/users",
-    color: "text-fuchsia-500"
+    icon: ShoppingCart, 
+    label: "المشتريات", 
+    path: "/purchases/requests",
+    color: "text-pink-500"
   },
+];
+
+// 7. الأصول والصيانة
+const assetsItems = [
   { 
-    icon: Calendar, 
-    label: "الاشتراكات", 
-    path: "/subscriptions",
-    color: "text-rose-500"
-  },
-  { 
-    icon: Gauge, 
-    label: "العدادات", 
-    path: "/meters",
-    color: "text-sky-500"
+    icon: Package, 
+    label: "الأصول", 
+    path: "/assets",
+    color: "text-yellow-500"
   },
   { 
     icon: ClipboardList, 
@@ -156,27 +191,21 @@ const phase1MenuItems = [
     color: "text-emerald-500"
   },
   { 
-    icon: Package, 
-    label: "الأصول", 
-    path: "/assets",
-    color: "text-yellow-500"
-  },
-  { 
     icon: Wrench, 
     label: "الصيانة", 
     path: "/maintenance",
     color: "text-gray-500"
   },
   { 
-    icon: Activity, 
-    label: "المراقبة", 
-    path: "/monitoring",
-    color: "text-blue-600"
+    icon: Calendar, 
+    label: "نوافذ الصيانة", 
+    path: "/maintenance-windows",
+    color: "text-orange-500"
   },
 ];
 
-// المرحلة 1: الموارد البشرية
-const hrMenuItems = [
+// 8. الموارد البشرية
+const hrItems = [
   { 
     icon: UserCircle, 
     label: "إدارة الموظفين", 
@@ -195,6 +224,92 @@ const hrMenuItems = [
     path: "/hr/payroll",
     color: "text-green-600"
   },
+];
+
+// 9. النشر والتحديثات
+const deploymentItems = [
+  { 
+    icon: Rocket, 
+    label: "إدارة النشر", 
+    path: "/deployment",
+    color: "text-purple-500"
+  },
+  { 
+    icon: Database, 
+    label: "هجرة البيانات", 
+    path: "/data-migration",
+    color: "text-blue-500"
+  },
+  { 
+    icon: RefreshCw, 
+    label: "التحديثات", 
+    path: "/system-updates",
+    color: "text-green-500"
+  },
+];
+
+// 10. الدعم الفني
+const supportItems = [
+  { 
+    icon: MessageSquare, 
+    label: "تذاكر الدعم", 
+    path: "/support-tickets",
+    color: "text-blue-500"
+  },
+  { 
+    icon: FileQuestion, 
+    label: "قاعدة المعرفة", 
+    path: "/knowledge-base",
+    color: "text-amber-500"
+  },
+];
+
+// 11. المراقبة والنظام
+const monitoringItems = [
+  { 
+    icon: HeartPulse, 
+    label: "صحة النظام", 
+    path: "/system-health",
+    color: "text-red-500"
+  },
+  { 
+    icon: Activity, 
+    label: "المراقبة", 
+    path: "/monitoring",
+    color: "text-blue-600"
+  },
+];
+
+// 12. الإدارة والإعدادات
+const adminItems = [
+  { 
+    icon: Shield, 
+    label: "الأدوار والصلاحيات", 
+    path: "/roles",
+    color: "text-violet-500"
+  },
+  { 
+    icon: Users, 
+    label: "إدارة المستخدمين", 
+    path: "/users",
+    color: "text-fuchsia-500"
+  },
+];
+
+// تعريف المجموعات مع عناوينها
+const menuGroups = [
+  { title: "الرئيسية", items: dashboardItems },
+  { title: "العملاء والموردين", items: crmItems },
+  { title: "العدادات والقراءات", items: metersItems },
+  { title: "الفواتير والمدفوعات", items: billingItems },
+  { title: "المحاسبة والمالية", items: accountingItems },
+  { title: "المخزون والمشتريات", items: inventoryItems },
+  { title: "الأصول والصيانة", items: assetsItems },
+  { title: "الموارد البشرية", items: hrItems },
+  { title: "النشر والتحديثات", items: deploymentItems },
+  { title: "الدعم الفني", items: supportItems },
+  { title: "المراقبة والنظام", items: monitoringItems },
+  { title: "الإدارة والإعدادات", items: adminItems },
 ];
 
 const SIDEBAR_WIDTH_KEY = "sidebar-width";
@@ -289,7 +404,9 @@ function DashboardLayoutContent({
   const isCollapsed = state === "collapsed";
   const [isResizing, setIsResizing] = useState(false);
   const sidebarRef = useRef<HTMLDivElement>(null);
-  const allMenuItems = [...phase0MenuItems, ...phase1MenuItems, ...hrMenuItems];
+  
+  // جمع كل العناصر للبحث عن العنصر النشط
+  const allMenuItems = menuGroups.flatMap(group => group.items);
   const activeMenuItem = allMenuItems.find(item => item.path === location);
   const isMobile = useIsMobile();
 
@@ -357,92 +474,35 @@ function DashboardLayoutContent({
           </SidebarHeader>
 
           <SidebarContent className="gap-0">
-            {/* المرحلة 0: الأنظمة الأساسية */}
-            <SidebarGroup>
-              <SidebarGroupLabel className="px-2 text-xs font-semibold text-muted-foreground">
-                الأنظمة الأساسية
-              </SidebarGroupLabel>
-              <SidebarGroupContent>
-                <SidebarMenu className="px-2 py-1">
-                  {phase0MenuItems.map(item => {
-                    const isActive = location === item.path;
-                    return (
-                      <SidebarMenuItem key={item.path}>
-                        <SidebarMenuButton
-                          isActive={isActive}
-                          onClick={() => setLocation(item.path)}
-                          tooltip={item.label}
-                          className={`h-10 transition-all font-normal`}
-                        >
-                          <item.icon
-                            className={`h-4 w-4 ${isActive ? item.color : "text-muted-foreground"}`}
-                          />
-                          <span>{item.label}</span>
-                        </SidebarMenuButton>
-                      </SidebarMenuItem>
-                    );
-                  })}
-                </SidebarMenu>
-              </SidebarGroupContent>
-            </SidebarGroup>
-
-            {/* المرحلة 1: الأنظمة المتقدمة */}
-            <SidebarGroup>
-              <SidebarGroupLabel className="px-2 text-xs font-semibold text-muted-foreground">
-                الأنظمة المتقدمة
-              </SidebarGroupLabel>
-              <SidebarGroupContent>
-                <SidebarMenu className="px-2 py-1">
-                  {phase1MenuItems.map(item => {
-                    const isActive = location === item.path;
-                    return (
-                      <SidebarMenuItem key={item.path}>
-                        <SidebarMenuButton
-                          isActive={isActive}
-                          onClick={() => setLocation(item.path)}
-                          tooltip={item.label}
-                          className={`h-10 transition-all font-normal`}
-                        >
-                          <item.icon
-                            className={`h-4 w-4 ${isActive ? item.color : "text-muted-foreground"}`}
-                          />
-                          <span>{item.label}</span>
-                        </SidebarMenuButton>
-                      </SidebarMenuItem>
-                    );
-                  })}
-                </SidebarMenu>
-              </SidebarGroupContent>
-            </SidebarGroup>
-
-            {/* الموارد البشرية */}
-            <SidebarGroup>
-              <SidebarGroupLabel className="px-2 text-xs font-semibold text-muted-foreground">
-                الموارد البشرية
-              </SidebarGroupLabel>
-              <SidebarGroupContent>
-                <SidebarMenu className="px-2 py-1">
-                  {hrMenuItems.map(item => {
-                    const isActive = location === item.path;
-                    return (
-                      <SidebarMenuItem key={item.path}>
-                        <SidebarMenuButton
-                          isActive={isActive}
-                          onClick={() => setLocation(item.path)}
-                          tooltip={item.label}
-                          className={`h-10 transition-all font-normal`}
-                        >
-                          <item.icon
-                            className={`h-4 w-4 ${isActive ? item.color : "text-muted-foreground"}`}
-                          />
-                          <span>{item.label}</span>
-                        </SidebarMenuButton>
-                      </SidebarMenuItem>
-                    );
-                  })}
-                </SidebarMenu>
-              </SidebarGroupContent>
-            </SidebarGroup>
+            {menuGroups.map((group, groupIndex) => (
+              <SidebarGroup key={groupIndex}>
+                <SidebarGroupLabel className="px-2 text-xs font-semibold text-muted-foreground">
+                  {group.title}
+                </SidebarGroupLabel>
+                <SidebarGroupContent>
+                  <SidebarMenu className="px-2 py-1">
+                    {group.items.map((item, itemIndex) => {
+                      const isActive = location === item.path;
+                      return (
+                        <SidebarMenuItem key={`${groupIndex}-${itemIndex}-${item.path}`}>
+                          <SidebarMenuButton
+                            isActive={isActive}
+                            onClick={() => setLocation(item.path)}
+                            tooltip={item.label}
+                            className="h-10 transition-all font-normal"
+                          >
+                            <item.icon
+                              className={`h-4 w-4 ${isActive ? item.color : "text-muted-foreground"}`}
+                            />
+                            <span>{item.label}</span>
+                          </SidebarMenuButton>
+                        </SidebarMenuItem>
+                      );
+                    })}
+                  </SidebarMenu>
+                </SidebarGroupContent>
+              </SidebarGroup>
+            ))}
           </SidebarContent>
 
           <SidebarFooter className="p-3">
