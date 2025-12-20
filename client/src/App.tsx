@@ -125,6 +125,15 @@ import InspectionsDashboard from "./pages/inspections/InspectionsDashboard";
 import AssetsManagementDashboard from "./pages/assets-management/AssetsManagementDashboard";
 import MaintenanceAdvancedDashboard from "./pages/maintenance-advanced/MaintenanceAdvancedDashboard";
 
+// Phase 5-6 - Deployment, Support & Maintenance
+import DeploymentPage from "./pages/deployment/DeploymentPage";
+import DataMigrationPage from "./pages/deployment/DataMigrationPage";
+import SupportTicketsPage from "./pages/support/SupportTicketsPage";
+import KnowledgeBasePage from "./pages/support/KnowledgeBasePage";
+import MaintenanceWindowsPage from "./pages/maintenance/MaintenanceWindowsPage";
+import SystemUpdatesPage from "./pages/maintenance/SystemUpdatesPage";
+import SystemHealthPage from "./pages/monitoring/SystemHealthPage";
+
 function App() {
   return (
     <ErrorBoundary>
@@ -250,6 +259,15 @@ function App() {
             <Route path="/inspections" component={InspectionsDashboard} />
             <Route path="/assets-management" component={AssetsManagementDashboard} />
             <Route path="/maintenance-advanced" component={MaintenanceAdvancedDashboard} />
+            
+            {/* Phase 5-6 - Deployment, Support & Maintenance */}
+            <Route path="/deployment" component={DeploymentPage} />
+            <Route path="/data-migration" component={DataMigrationPage} />
+            <Route path="/support-tickets" component={SupportTicketsPage} />
+            <Route path="/knowledge-base" component={KnowledgeBasePage} />
+            <Route path="/maintenance-windows" component={MaintenanceWindowsPage} />
+            <Route path="/system-updates" component={SystemUpdatesPage} />
+            <Route path="/system-health" component={SystemHealthPage} />
             
             {/* 404 */}
             <Route component={NotFound} />

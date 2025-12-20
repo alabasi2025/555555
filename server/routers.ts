@@ -59,6 +59,12 @@ import { materialsEquipmentRouter } from "./routers/materials-equipment";
 import { inspectionsRouter } from "./routers/inspections";
 import { assetsManagementRouter } from "./routers/assets-management";
 import { maintenanceAdvancedRouter } from "./routers/maintenance-advanced";
+// Phase 5-6 routers - Deployment, Support & Maintenance
+import { deploymentRouter } from "./routers/deployment";
+import { dataMigrationRouter } from "./routers/data-migration";
+import { supportRouter } from "./routers/support";
+import { systemMaintenanceRouter } from "./routers/system-maintenance";
+import { systemHealthRouter } from "./routers/system-health";
 
 export const appRouter = router({
     // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly
@@ -140,6 +146,13 @@ export const appRouter = router({
   inspections: inspectionsRouter,
   assetsManagement: assetsManagementRouter,
   maintenanceAdvanced: maintenanceAdvancedRouter,
+  
+  // Phase 5-6 routers - Deployment, Support & Maintenance
+  deployment: deploymentRouter,
+  dataMigration: dataMigrationRouter,
+  support: supportRouter,
+  systemMaintenance: systemMaintenanceRouter,
+  systemHealth: systemHealthRouter,
 });
 
 export type AppRouter = typeof appRouter;

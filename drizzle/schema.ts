@@ -854,3 +854,6 @@ export * from "./schema-phase3";
 
 // Phase 4: Field Operations, Assets & Maintenance
 export * from "./schema-phase4";
+
+// Phase 5-6: Deployment, Support & Maintenance
+export * from "./schema-phase5-6";
