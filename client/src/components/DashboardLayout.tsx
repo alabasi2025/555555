@@ -1,4 +1,5 @@
 import { useAuth } from "@/_core/hooks/useAuth";
+import { TopHeader } from "./TopHeader";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -682,22 +683,15 @@ function DashboardLayoutContent({
       </div>
 
       <SidebarInset>
-        {isMobile && (
-          <div className="flex border-b h-14 items-center justify-between bg-background/95 px-3 backdrop-blur supports-[backdrop-filter]:backdrop-blur sticky top-0 z-40">
-            <div className="flex items-center gap-3">
-              <SidebarTrigger className="h-9 w-9 rounded-lg bg-background border" />
-              <div className="flex items-center gap-2">
-                <div className="h-7 w-7 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
-                  <Zap className="h-3.5 w-3.5 text-white" />
-                </div>
-                <span className="font-semibold text-sm">
-                  {activeMenuItem?.label ?? "القائمة"}
-                </span>
-              </div>
-            </div>
-          </div>
-        )}
-        <main className="flex-1 p-4 bg-muted/30">{children}</main>
+        {/* Top Header */}
+        <TopHeader 
+          title={activeMenuItem?.label}
+          showMenuButton={isMobile}
+          onMenuClick={toggleSidebar}
+        />
+        
+        {/* Main Content */}
+        <main className="flex-1 p-4 bg-muted/30 dark:bg-background">{children}</main>
       </SidebarInset>
     </>
   );
