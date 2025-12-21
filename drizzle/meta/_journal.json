@@ -22,6 +22,13 @@
       "when": 1765710791676,
       "tag": "0002_low_thunderbolt",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1766305809235,
+      "tag": "0003_lying_absorbing_man",
+      "breakpoints": true
     }
   ]
 }

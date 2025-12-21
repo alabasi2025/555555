@@ -3,9 +3,10 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useState, useEffect } from "react";
-import { trpc } from "@/lib/trpc";
 import { useLocation } from "wouter";
+import { Loader2, AlertCircle, CheckCircle } from "lucide-react";
 
 // مدة الجلسة بالميلي ثانية
 const SESSION_DURATION = 24 * 60 * 60 * 1000; // يوم واحد
@@ -15,6 +16,9 @@ export default function SimpleLogin() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
   const [, setLocation] = useLocation();
 
   // التحقق من وجود جلسة محفوظة عند تحميل الصفحة
@@ -58,42 +62,68 @@ export default function SimpleLogin() {
     }
   }, [setLocation]);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // تخزين معلومات المستخدم في localStorage
-    const mockUser = {
-      id: "1",
-      name: username || "مستخدم تجريبي",
-      email: "demo@powerstation.com",
-      role: "admin",
-      openId: "demo-user",
-    };
-    
-    localStorage.setItem("demo-user", JSON.stringify(mockUser));
-    localStorage.setItem("demo-authenticated", "true");
-    
-    // تعيين مدة الجلسة
-    const sessionDuration = rememberMe ? REMEMBER_ME_DURATION : SESSION_DURATION;
-    const expiryTime = new Date().getTime() + sessionDuration;
-    localStorage.setItem("session-expiry", expiryTime.toString());
-    
-    // حفظ بيانات "تذكرني" إذا تم تفعيله
-    if (rememberMe) {
-      const credentials = {
-        username: username,
-        savedAt: new Date().toISOString(),
-      };
-      localStorage.setItem("remembered-credentials", JSON.stringify(credentials));
-      localStorage.setItem("remember-expiry", (new Date().getTime() + REMEMBER_ME_DURATION).toString());
-    } else {
-      // حذف بيانات "تذكرني" إذا لم يتم تفعيله
-      localStorage.removeItem("remembered-credentials");
-      localStorage.removeItem("remember-expiry");
+    setError(null);
+    setSuccess(null);
+    setIsLoading(true);
+
+    try {
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username,
+          password,
+          rememberMe,
+        }),
+        credentials: "include",
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        setError(data.error || "فشل تسجيل الدخول");
+        setIsLoading(false);
+        return;
+      }
+
+      // حفظ بيانات المستخدم
+      localStorage.setItem("demo-user", JSON.stringify(data.user));
+      localStorage.setItem("demo-authenticated", "true");
+      
+      // حساب مدة الجلسة
+      const sessionDuration = rememberMe ? REMEMBER_ME_DURATION : SESSION_DURATION;
+      const expiryTime = new Date().getTime() + sessionDuration;
+      localStorage.setItem("session-expiry", expiryTime.toString());
+      
+      // حفظ بيانات "تذكرني" إذا تم تفعيله
+      if (rememberMe) {
+        const credentials = {
+          username: username,
+          savedAt: new Date().toISOString(),
+        };
+        localStorage.setItem("remembered-credentials", JSON.stringify(credentials));
+        localStorage.setItem("remember-expiry", (new Date().getTime() + REMEMBER_ME_DURATION).toString());
+      } else {
+        localStorage.removeItem("remembered-credentials");
+        localStorage.removeItem("remember-expiry");
+      }
+
+      setSuccess("تم تسجيل الدخول بنجاح!");
+      
+      // التوجيه إلى لوحة التحكم بعد ثانية
+      setTimeout(() => {
+        setLocation("/dashboard");
+      }, 1000);
+    } catch (err) {
+      console.error("Login error:", err);
+      setError("حدث خطأ في الاتصال بالخادم");
+    } finally {
+      setIsLoading(false);
     }
-    
-    // التوجيه إلى لوحة التحكم
-    setLocation("/dashboard");
   };
 
   const handleRememberMeChange = (checked: boolean) => {
@@ -133,6 +163,21 @@ export default function SimpleLogin() {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleLogin} className="space-y-4">
+            {/* رسائل الخطأ والنجاح */}
+            {error && (
+              <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
+            
+            {success && (
+              <Alert className="border-green-500 bg-green-50 text-green-700">
+                <CheckCircle className="h-4 w-4" />
+                <AlertDescription>{success}</AlertDescription>
+              </Alert>
+            )}
+
             <div className="space-y-2">
               <Label htmlFor="username" className="text-right block">اسم المستخدم</Label>
               <Input
@@ -143,6 +188,8 @@ export default function SimpleLogin() {
                 onChange={(e) => setUsername(e.target.value)}
                 dir="rtl"
                 className="text-right"
+                disabled={isLoading}
+                required
               />
             </div>
             <div className="space-y-2">
@@ -155,6 +202,8 @@ export default function SimpleLogin() {
                 onChange={(e) => setPassword(e.target.value)}
                 dir="rtl"
                 className="text-right"
+                disabled={isLoading}
+                required
               />
             </div>
             
@@ -166,6 +215,7 @@ export default function SimpleLogin() {
                   checked={rememberMe}
                   onCheckedChange={handleRememberMeChange}
                   className="data-[state=checked]:bg-blue-600"
+                  disabled={isLoading}
                 />
                 <Label
                   htmlFor="rememberMe"
@@ -186,17 +236,32 @@ export default function SimpleLogin() {
               </a>
             </div>
             
-            <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 transition-colors">
-              تسجيل الدخول
+            <Button 
+              type="submit" 
+              className="w-full bg-blue-600 hover:bg-blue-700 transition-colors"
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  جاري تسجيل الدخول...
+                </>
+              ) : (
+                "تسجيل الدخول"
+              )}
             </Button>
             
-            {/* معلومات إضافية */}
+            {/* معلومات الحساب الافتراضي */}
             <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-100">
-              <p className="text-sm text-blue-700 text-center">
-                <span className="font-semibold">نظام تجريبي</span> - يمكنك استخدام أي اسم مستخدم
+              <p className="text-sm text-blue-700 text-center font-semibold mb-2">
+                بيانات الدخول الافتراضية
               </p>
+              <div className="text-xs text-blue-600 text-center space-y-1">
+                <p><span className="font-medium">اسم المستخدم:</span> admin</p>
+                <p><span className="font-medium">كلمة المرور:</span> admin123</p>
+              </div>
               {rememberMe && (
-                <p className="text-xs text-blue-600 text-center mt-1">
+                <p className="text-xs text-blue-500 text-center mt-2 pt-2 border-t border-blue-200">
                   سيتم حفظ بيانات الدخول لمدة 30 يوم
                 </p>
               )}

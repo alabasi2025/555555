@@ -7,6 +7,8 @@ import { registerOAuthRoutes } from "./oauth";
 import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
+import localAuthRoutes from "../routes/localAuth";
+import localAuth from "./localAuth";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -33,8 +35,14 @@ async function startServer() {
   // Configure body parser with larger size limit for file uploads
   app.use(express.json({ limit: "50mb" }));
   app.use(express.urlencoded({ limit: "50mb", extended: true }));
+  // إنشاء المستخدم الافتراضي (admin)
+  await localAuth.ensureDefaultAdmin();
+
   // OAuth callback under /api/oauth/callback
   registerOAuthRoutes(app);
+  
+  // مسارات المصادقة المحلية
+  app.use("/api/auth", localAuthRoutes);
   
   // REST API routes
   const accountsRouter = await import("../routes/accounts").then(m => m.default);
@@ -63,6 +71,8 @@ async function startServer() {
 
   server.listen(port, () => {
     console.log(`Server running on http://localhost:${port}/`);
+    console.log(`[LocalAuth] Local authentication enabled`);
+    console.log(`[LocalAuth] Default admin: username=admin, password=admin123`);
   });
 }
 
