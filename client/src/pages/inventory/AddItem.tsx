@@ -456,6 +456,7 @@ const InventoryTable: React.FC<{ inventory: InventoryItem[] }> = ({ inventory })
 // 5. المكون الرئيسي (AddItem)
 // *****************************************************************
 const AddItem: React.FC = () => {
+  const { data: inventoryData, isLoading, error } = trpc.inventory.list.useQuery();
   const [inventory, setInventory] = useState<InventoryItem[]>(mockInventory);
 
   const handleAddItem = (newItem: InventoryItem) => {

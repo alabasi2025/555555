@@ -534,6 +534,7 @@ const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({ children }) 
 // *****************************************************************
 
 export const BalanceSheet: React.FC = () => {
+  const { data: reportsData, isLoading, error } = trpc.reports.getFinancialSummary.useQuery();
   const [reportData, setReportData] = useState<BalanceSheetReport>(generateMockData());
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 

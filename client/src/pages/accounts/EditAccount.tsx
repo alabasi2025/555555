@@ -120,6 +120,7 @@ const mockUpdateAccount = (
 // -----------------------------------------------------------------------------
 
 const EditAccount: React.FC = () => {
+  const { data: accountsListData } = trpc.accounts.list.useQuery();
   const { id } = useRoute<{ id: string }>();
   const { toast } = useToast();
 

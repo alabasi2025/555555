@@ -203,6 +203,7 @@ const getStatusBadge = (status: InvoiceStatus) => {
 // -----------------------------------------------------------------------------
 
 const InvoiceDetails: React.FC = () => {
+  const { data: invoicesListData } = trpc.invoices.list.useQuery();
   const invoice = mockInvoice;
 
   // وظيفة الطباعة (تنفيذ مبسط)
@@ -317,6 +318,7 @@ const InvoiceDetails: React.FC = () => {
 
   // مكون لإضافة بند جديد (تنفيذ وهمي)
   const AddItemDialog: React.FC = () => {
+  const { data: invoicesListData } = trpc.invoices.list.useQuery();
     const [isOpen, setIsOpen] = React.useState(false);
     const [newItem, setNewItem] = React.useState({ description: '', quantity: 1, unitPrice: 0 });
 
@@ -407,6 +409,7 @@ const InvoiceDetails: React.FC = () => {
 
   // مكون لحذف الفاتورة (تنفيذ وهمي)
   const DeleteInvoiceButton: React.FC = () => {
+  const { data: invoicesListData } = trpc.invoices.list.useQuery();
     const handleDelete = () => {
       if (window.confirm(`هل أنت متأكد من حذف الفاتورة رقم ${invoice.invoiceNumber}؟`)) {
         console.log('تم حذف الفاتورة (وهمي).');

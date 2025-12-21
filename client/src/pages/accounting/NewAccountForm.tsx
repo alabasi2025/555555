@@ -87,6 +87,7 @@ const defaultValues: Partial<NewAccountFormValues> = {
 };
 
 export default function NewAccountForm() {
+  const { data: accountingData } = trpc.accounts.list.useQuery();
   const { toast } = useToast(); // افتراض استخدام useToast من shadcn/ui
 
   // 2. تهيئة النموذج باستخدام react-hook-form و zodResolver

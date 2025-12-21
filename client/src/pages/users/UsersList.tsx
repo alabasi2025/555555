@@ -145,6 +145,7 @@ const UserForm: React.FC<UserFormProps> = ({ user, onSave, onClose }) => {
 
 // 6. المكون الرئيسي (UsersList)
 const UsersList: React.FC = () => {
+  const { data: usersListData } = trpc.users.list.useQuery();
   const { data: users, isLoading } = useUsers();
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);

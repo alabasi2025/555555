@@ -703,6 +703,7 @@ const MeterDetails: React.FC<{ meter: Meter; onClose: () => void }> = ({ meter, 
 // المكون الرئيسي
 // ============================================
 const MetersList: React.FC = () => {
+  const { data: listData } = trpc.dashboard.getStats.useQuery();
   const [meters, setMeters] = useState<Meter[]>(mockMeters);
   const [stats] = useState<MeterStats>(mockStats);
   const [sorting, setSorting] = useState<SortingState>([]);

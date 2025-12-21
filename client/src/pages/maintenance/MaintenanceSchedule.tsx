@@ -261,6 +261,7 @@ const columns: ColumnDef<MaintenanceSchedule>[] = [
 
 // المكون الرئيسي
 export default function MaintenanceSchedulePage() {
+  const { data: dashboardData } = trpc.dashboard.getMainStats.useQuery();
   const { data: schedules, isLoading } = useMaintenanceSchedules();
   const { mutate: addMutate } = useAddOrUpdateSchedule();
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);

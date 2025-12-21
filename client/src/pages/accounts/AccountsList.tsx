@@ -9,6 +9,7 @@ import { useState } from "react";
 import { trpc } from "@/lib/trpc";
 
 export default function AccountsList() {
+  const { data: accountsListData } = trpc.accounts.list.useQuery();
   const [searchTerm, setSearchTerm] = useState("");
 
   // بيانات تجريبية

@@ -150,16 +150,22 @@ export default function EmployeesList() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [activeTab, setActiveTab] = useState<'list' | 'departments' | 'positions'>('list');
 
+  // جلب البيانات من الـ Backend
+  const { data: employeesData, isLoading, error, refetch } = trpc.employees.list.useQuery();
+  
+  // استخدام البيانات من الـ Backend أو البيانات الوهمية كاحتياطي
+  const employees = (employeesData as any)?.data || employeesData || mockEmployees;
+
   // إحصائيات
   const stats = {
-    totalEmployees: mockEmployees.length,
-    activeEmployees: mockEmployees.filter(e => e.status === 'active').length,
-    onLeave: mockEmployees.filter(e => e.status === 'on_leave').length,
+    totalEmployees: employees.length,
+    activeEmployees: employees.filter((e: any) => e.status === 'active').length,
+    onLeave: employees.filter((e: any) => e.status === 'on_leave').length,
     newThisMonth: 2,
   };
 
   // تصفية الموظفين
-  const filteredEmployees = mockEmployees.filter(emp => {
+  const filteredEmployees = employees.filter((emp: any) => {
     const matchesSearch = emp.fullNameAr.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          emp.employeeNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          emp.email.toLowerCase().includes(searchTerm.toLowerCase());
@@ -349,7 +355,7 @@ export default function EmployeesList() {
                       </tr>
                     </thead>
                     <tbody className="divide-y">
-                      {filteredEmployees.map((employee) => (
+                      {filteredEmployees.map((employee: any) => (
                         <tr key={employee.id} className="hover:bg-gray-50">
                           <td className="py-3 px-4">
                             <div className="flex items-center gap-3">

@@ -54,6 +54,7 @@ const updateCustomer = (id: string, data: CustomerFormValues): Promise<void> => 
 };
 
 export default function EditCustomer() {
+  const { data: customersData, isLoading, error } = trpc.customers.list.useQuery();
   const { id } = useRoute<{ id: string }>(); // افتراض جلب الـ ID من المسار
   const { toast } = useToast();
   const [isFetching, setIsFetching] = useState(true);

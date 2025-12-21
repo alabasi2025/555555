@@ -208,6 +208,7 @@ function getActionBadge(action: string) {
 // ============================================
 
 export default function UsersManagement() {
+  const { data: usersListData } = trpc.users.list.useQuery();
   const [, setLocation] = useLocation();
   const [activeTab, setActiveTab] = useState("users");
   const [searchTerm, setSearchTerm] = useState("");

@@ -259,6 +259,7 @@ const TransactionsTable: React.FC<{ transactions: Transaction[] }> = ({ transact
 
 // 4. المكون الرئيسي
 const AccountDetailsPage: React.FC = () => {
+  const { data: accountsListData } = trpc.accounts.list.useQuery();
   // استخدام useRoute لمحاكاة جلب معرف الحساب من المسار
   // في تطبيق حقيقي، قد يكون هذا: const { accountId } = useRoute<{ accountId: string }>();
   const accountId = 'ACC-12345678'; // قيمة وهمية لغرض العرض

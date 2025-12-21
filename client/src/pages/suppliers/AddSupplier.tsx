@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 export default function AddSupplier() {
+  const { data: suppliersData, isLoading, error } = trpc.suppliers.list.useQuery();
   return (
     <DashboardLayout>
       <Card>

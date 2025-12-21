@@ -111,6 +111,7 @@ const MockChart: React.FC<{ data: CashFlowChartData[] }> = ({ data }) => (
 
 // 5. المكون الرئيسي: CashFlow
 const CashFlow: React.FC = () => {
+  const { data: reportsData, isLoading, error } = trpc.reports.getFinancialSummary.useQuery();
   const [transactions, setTransactions] = useState<CashFlowTransaction[]>(MOCK_TRANSACTIONS);
   const [searchTerm, setSearchTerm] = useState('');
   const [isDialogOpen, setIsDialogOpen] = useState(false);

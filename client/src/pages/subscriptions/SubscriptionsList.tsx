@@ -609,6 +609,7 @@ const SubscriptionDetails: React.FC<{ subscription: Subscription; onClose: () =>
 // المكون الرئيسي
 // ============================================
 const SubscriptionsList: React.FC = () => {
+  const { data: listData } = trpc.dashboard.getStats.useQuery();
   const [subscriptions, setSubscriptions] = useState<Subscription[]>(mockSubscriptions);
   const [stats] = useState<SubscriptionStats>(mockStats);
   const [sorting, setSorting] = useState<SortingState>([]);

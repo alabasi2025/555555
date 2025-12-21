@@ -12,6 +12,7 @@ import { useLocation } from "wouter";
 import { toast } from "sonner";
 
 export default function NewAccountForm() {
+  const { data: accountsListData } = trpc.accounts.list.useQuery();
   const [, setLocation] = useLocation();
   const [selectedType, setSelectedType] = useState<string>("");
   const [formData, setFormData] = useState({

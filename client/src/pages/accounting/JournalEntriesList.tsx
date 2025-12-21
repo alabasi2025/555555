@@ -701,6 +701,7 @@ const DashboardLayout: React.FC<{ children: React.ReactNode; title: string }> = 
 );
 
 export const JournalEntriesList: React.FC = () => {
+  const { data: journalData, isLoading, error } = trpc.journalEntries.list.useQuery();
   const [data, setData] = useState<JournalEntry[]>(MOCK_JOURNAL_ENTRIES);
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);

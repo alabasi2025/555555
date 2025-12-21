@@ -358,6 +358,7 @@ const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({ children }) 
 );
 
 const GeneralLedger: React.FC = () => {
+  const { data: accountingData } = trpc.accounts.list.useQuery();
   const initialData = useMemo(() => generateMockData(mockAccount), []);
   const [data, setData] = useState<LedgerEntry[]>(initialData);
   const [searchTerm, setSearchTerm] = useState('');

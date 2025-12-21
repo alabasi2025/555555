@@ -627,6 +627,7 @@ const Step2AddItems: React.FC<Step2Props> = ({ formData, setFormData, onPrev, on
 // =================================================================
 
 export const PurchaseOrder: React.FC = () => {
+  const { data: purchasesData, isLoading, error } = trpc.purchases.list.useQuery();
   const [formData, setFormData] = useState<PurchaseOrderForm>(getInitialPurchaseOrderState());
   const [step, setStep] = useState(1); // 1: Select Supplier, 2: Add Items
 

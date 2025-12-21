@@ -4,6 +4,7 @@ import DashboardLayout from "@/components/DashboardLayout";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 
 export default function AddItemForm() {
+  const { data: inventoryData, isLoading, error } = trpc.inventory.list.useQuery();
   return (
     <DashboardLayout>
       <Card>

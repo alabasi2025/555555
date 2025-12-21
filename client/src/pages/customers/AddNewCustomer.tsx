@@ -89,6 +89,7 @@ const defaultValues: Partial<CustomerFormValues> = {
 };
 
 export default function AddNewCustomerPage() {
+  const { data: customersData, isLoading, error } = trpc.customers.list.useQuery();
   const { toast } = useToast();
 
   const form = useForm<CustomerFormValues>({

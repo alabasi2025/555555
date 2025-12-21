@@ -364,6 +364,7 @@ const RoleFormDialog: React.FC<RoleFormDialogProps> = ({ open, onOpenChange, rol
 // =============================================================================
 
 export const RolesAndPermissionsManagement: React.FC = () => {
+  const { data: usersListData } = trpc.users.list.useQuery();
   const [roles, setRoles] = useState<Role[]>(MOCK_ROLES);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [roleToEdit, setRoleToEdit] = useState<Role | null>(null);

@@ -136,6 +136,7 @@ const sampleRoles: Role[] = [
 // ============================================
 
 export default function PermissionsManagement() {
+  const { data: usersListData } = trpc.users.list.useQuery();
   const [, setLocation] = useLocation();
   const [activeTab, setActiveTab] = useState("roles");
   const [searchTerm, setSearchTerm] = useState("");

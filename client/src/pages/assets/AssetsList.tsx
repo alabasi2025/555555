@@ -777,8 +777,18 @@ const AssetDetails: React.FC<{ asset: Asset; maintenanceRecords: MaintenanceReco
 // المكون الرئيسي
 // ============================================
 const AssetsList: React.FC = () => {
+  // جلب البيانات من الـ Backend
+  const { data: assetsData, isLoading, error, refetch } = trpc.assets.list.useQuery();
+  
   const [assets, setAssets] = useState<Asset[]>(mockAssets);
   const [stats] = useState<AssetStats>(mockStats);
+  
+  // تحديث البيانات عند وصولها من الـ Backend
+  React.useEffect(() => {
+    if (assetsData) {
+      setAssets(assetsData as any);
+    }
+  }, [assetsData]);
   const [sorting, setSorting] = useState<SortingState>([]);
   const [globalFilter, setGlobalFilter] = useState('');
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);

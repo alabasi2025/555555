@@ -66,6 +66,7 @@ const statusLabels: Record<string, string> = {
 };
 
 export default function AttendanceManagement() {
+  const { data: attendanceData, isLoading, error } = trpc.attendance.getMonthlyReport.useQuery({ year: new Date().getFullYear(), month: new Date().getMonth() + 1 });
   const [activeTab, setActiveTab] = useState<'today' | 'monthly' | 'shifts'>('today');
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
   const [searchTerm, setSearchTerm] = useState('');

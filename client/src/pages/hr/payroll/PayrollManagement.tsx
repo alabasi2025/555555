@@ -96,6 +96,7 @@ const bonusTypeLabels: Record<string, string> = {
 };
 
 export default function PayrollManagement() {
+  const { data: payrollData, isLoading, error } = trpc.payroll.getPeriods.useQuery();
   const [activeTab, setActiveTab] = useState<'periods' | 'payslips' | 'loans' | 'bonuses'>('periods');
   const [selectedPeriod, setSelectedPeriod] = useState<number | null>(1);
   const [searchTerm, setSearchTerm] = useState('');

@@ -433,6 +433,7 @@ const PurchaseOrderForm: React.FC<PurchaseOrderFormProps> = ({ initialData, onSa
 // -----------------------------------------------------------------------------
 
 const PurchaseOrdersList: React.FC = () => {
+  const { data: purchasesData, isLoading, error } = trpc.purchases.list.useQuery();
   const [data, setData] = useState<PurchaseOrder[]>(mockPurchaseOrders);
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);

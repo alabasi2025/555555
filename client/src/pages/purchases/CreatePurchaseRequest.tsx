@@ -4,6 +4,7 @@ import DashboardLayout from "@/components/DashboardLayout";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 
 export default function CreatePurchaseRequest() {
+  const { data: purchasesData, isLoading, error } = trpc.purchases.list.useQuery();
   return (
     <DashboardLayout>
       <Card>

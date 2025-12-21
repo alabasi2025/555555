@@ -341,6 +341,7 @@ const MovementForm: React.FC<MovementFormProps> = ({
 // -----------------------------------------------------------------------------
 
 const StockMovementComponent: React.FC = () => {
+  const { data: inventoryData, isLoading, error } = trpc.inventory.list.useQuery();
   const [movements, setMovements] = useState<StockMovement[]>(initialMovements);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingMovement, setEditingMovement] = useState<StockMovement | undefined>(

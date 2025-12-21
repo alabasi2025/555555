@@ -105,6 +105,7 @@ const alertsData = [
 ];
 
 export default function MonitoringDashboard() {
+  const { data: dashboardData } = trpc.dashboard.getStats.useQuery();
   const [activeTab, setActiveTab] = useState("overview");
   const [isRefreshing, setIsRefreshing] = useState(false);
 

@@ -210,6 +210,7 @@ const CashFlowTable: React.FC<CashFlowTableProps> = ({ report }) => {
 // -----------------------------------------------------------------------------
 
 const CashFlowStatementReport: React.FC = () => {
+  const { data: dashboardData } = trpc.dashboard.getStats.useQuery();
   const [reportData, setReportData] = useState<CashFlowReport | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();

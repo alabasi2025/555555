@@ -485,6 +485,7 @@ const columns: ColumnDef<StockMovement>[] = [
 // 6. Main Component: StockMovementsList
 
 export const StockMovementsList: React.FC = () => {
+  const { data: inventoryData, isLoading, error } = trpc.inventory.list.useQuery();
   const [data, setData] = useState<StockMovement[]>(mockData);
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);

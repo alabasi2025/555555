@@ -52,6 +52,7 @@ type PaymentFormValues = z.infer<typeof paymentSchema>;
 
 // 3. Define the Component
 const NewPaymentForm: React.FC = () => {
+  const { data: billingData } = trpc.invoices.list.useQuery();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 

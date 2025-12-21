@@ -4,6 +4,7 @@ import DashboardLayout from "@/components/DashboardLayout";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 
 export default function DailyJournalsPage() {
+  const { data: accountingData } = trpc.accounts.list.useQuery();
   return (
     <DashboardLayout>
       <Card>

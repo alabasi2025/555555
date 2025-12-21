@@ -4,6 +4,7 @@ import DashboardLayout from "@/components/DashboardLayout";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 
 export default function EditSupplier() {
+  const { data: suppliersData, isLoading, error } = trpc.suppliers.list.useQuery();
   return (
     <DashboardLayout>
       <Card>
