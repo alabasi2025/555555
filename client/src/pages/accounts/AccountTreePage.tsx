@@ -1,5 +1,6 @@
 // @ts-nocheck
 import React, { useState, useEffect, useCallback } from 'react';
+import { trpc } from '@/lib/trpc';
 import { ChevronDown, ChevronRight, FileText, Plus, Edit, Trash2, Loader2, AlertTriangle } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -295,57 +296,58 @@ const DashboardLayout: React.FC<{ children: React.ReactNode; title: string }> = 
 );
 
 const AccountTreePage: React.FC = () => {
-  const [treeData, setTreeData] = useState<Account[] | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [selectedAccount, setSelectedAccount] = useState<Account | null>(null);
 
-  const loadTreeData = useCallback(async () => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const data = await fetchAccountTree();
-      setTreeData(data);
-      setSelectedAccount(data[0] || null); // Select the first root node by default
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'حدث خطأ غير معروف أثناء جلب البيانات.');
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+  // جلب البيانات من الـ Backend
+  const { data: accountsData, isLoading, error, refetch } = trpc.accounts.list.useQuery();
 
+  // تحويل البيانات إلى شجرة
+  const treeData = React.useMemo(() => {
+    if (!accountsData) return null;
+    
+    // تحويل البيانات المسطحة إلى شجرة
+    const buildTree = (accounts: any[], parentId: number | null = null): Account[] => {
+      return accounts
+        .filter(acc => acc.parentId === parentId)
+        .map(acc => ({
+          id: String(acc.id),
+          name: acc.accountName,
+          code: acc.accountCode,
+          type: acc.accountType as Account['type'],
+          balance: Number(acc.balance || 0),
+          children: buildTree(accounts, acc.id),
+        }));
+    };
+    
+    return buildTree(accountsData);
+  }, [accountsData]);
+
+  // تحديد أول حساب عند تحميل البيانات
   useEffect(() => {
-    loadTreeData();
-  }, [loadTreeData]);
+    if (treeData && treeData.length > 0 && !selectedAccount) {
+      setSelectedAccount(treeData[0]);
+    }
+  }, [treeData, selectedAccount]);
+
+  // Mutations
+  const updateMutation = trpc.accounts.update.useMutation({
+    onSuccess: () => {
+      refetch();
+      alert('تم تحديث الحساب بنجاح');
+    },
+    onError: (err) => {
+      alert('خطأ: ' + err.message);
+    },
+  });
 
   const handleUpdateAccount = (data: AccountFormValues) => {
-    // Simulate API call for update
-    console.log('Updating account:', selectedAccount?.id, data);
-    setIsLoading(true);
-    setTimeout(() => {
-      // In a real app, you would update the state with the new data from the server
-      if (selectedAccount) {
-        setTreeData((prevData) => {
-          if (!prevData) return null;
-          const updateNode = (nodes: Account[]): Account[] => {
-            return nodes.map((node) => {
-              if (node.id === selectedAccount.id) {
-                const updatedNode = { ...node, ...data };
-                setSelectedAccount(updatedNode);
-                return updatedNode;
-              }
-              if (node.children) {
-                return { ...node, children: updateNode(node.children) };
-              }
-              return node;
-            });
-          };
-          return updateNode(prevData);
-        });
-      }
-      setIsLoading(false);
-      alert('تم تحديث الحساب بنجاح (وهمي).');
-    }, 1000);
+    if (selectedAccount) {
+      updateMutation.mutate({
+        id: Number(selectedAccount.id),
+        accountName: data.name,
+        accountCode: data.code,
+      });
+    }
   };
 
   const renderContent = () => {
@@ -365,8 +367,8 @@ const AccountTreePage: React.FC = () => {
         <Alert variant="destructive" className="rtl">
           <AlertTriangle className="h-4 w-4 ml-2" />
           <AlertTitle>خطأ في التحميل</AlertTitle>
-          <AlertDescription>{error}</AlertDescription>
-          <Button onClick={loadTreeData} className="mt-4">
+          <AlertDescription>{error.message}</AlertDescription>
+          <Button onClick={() => refetch()} className="mt-4">
             إعادة المحاولة
           </Button>
         </Alert>
