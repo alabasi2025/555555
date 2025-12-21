@@ -1,5 +1,6 @@
 // @ts-nocheck
 import React, { useState, useTransition, useCallback } from 'react';
+import { trpc } from '@/lib/trpc';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';

@@ -2,6 +2,7 @@
 // هذا الملف هو مكون React كامل جاهز للاستخدام
 
 import * as React from "react";
+import { trpc } from "@/lib/trpc";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";

@@ -2,6 +2,7 @@
 // InvoiceDetails.tsx
 
 import React from 'react';
+import { trpc } from '@/lib/trpc';
 import { ArrowLeft, Printer, FileText, Search, ArrowUpDown } from 'lucide-react';
 
 // استيراد مكونات shadcn/ui (افتراضية)

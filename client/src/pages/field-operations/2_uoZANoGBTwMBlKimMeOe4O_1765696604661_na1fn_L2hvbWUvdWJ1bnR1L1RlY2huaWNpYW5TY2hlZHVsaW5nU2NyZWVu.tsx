@@ -1,5 +1,6 @@
 // @ts-nocheck
 import React, { useState, useMemo } from 'react';
+import { trpc } from '@/lib/trpc';
 import { Calendar as CalendarIcon, Users, Briefcase, Clock, MapPin, AlertTriangle, CheckCircle, XCircle, Plus, CalendarDays } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';

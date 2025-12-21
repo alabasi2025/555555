@@ -4,6 +4,7 @@
 // يستخدم React 19 + TypeScript، shadcn/ui، Tailwind CSS 4، وتصميم عربي متكامل.
 
 import React, { useState } from 'react';
+import { trpc } from '@/lib/trpc';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 // Removed invalid import

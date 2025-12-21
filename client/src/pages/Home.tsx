@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Loader2, ArrowRight } from "lucide-react";
 import { useLocation } from "wouter";
 import { useEffect, useState } from "react";
+import { trpc } from "@/lib/trpc";
 
 export default function Home() {
   const [, setLocation] = useLocation();

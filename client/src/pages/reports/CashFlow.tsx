@@ -1,5 +1,6 @@
 // @ts-nocheck
 import React, { useState, useMemo } from 'react';
+import { trpc } from '@/lib/trpc';
 import { ArrowDown, ArrowUp, DollarSign, Search, Plus, Edit, Trash2, BarChart3, TrendingUp, TrendingDown } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'; // افتراض وجود مسار صحيح لمكونات shadcn/ui
 import { Button } from '@/components/ui/button';

@@ -1,5 +1,6 @@
 // @ts-nocheck
 import React, { useState, useEffect, useCallback } from 'react';
+import { trpc } from '@/lib/trpc';
 import { useRoute } from 'wouter';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';

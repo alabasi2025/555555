@@ -1,4 +1,5 @@
 // @ts-nocheck
+import { trpc } from "@/lib/trpc";
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";

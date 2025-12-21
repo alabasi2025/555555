@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Plus, Search, Edit, Trash2, Eye } from "lucide-react";
 import { Link } from "wouter";
 import { useState } from "react";
+import { trpc } from "@/lib/trpc";
 
 export default function AccountsList() {
   const [searchTerm, setSearchTerm] = useState("");

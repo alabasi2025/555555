@@ -1,5 +1,6 @@
 // @ts-nocheck
 import React, { useState, useMemo } from 'react';
+import { trpc } from '@/lib/trpc';
 import {
   Table,
   TableBody,

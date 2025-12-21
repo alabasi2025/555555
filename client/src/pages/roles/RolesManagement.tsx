@@ -2,6 +2,7 @@
 // بسبب الحاجة إلى تضمين جميع المكونات والمنطق في ملف واحد لمحاكاة بيئة shadcn/ui و react-table.
 
 import React, { useState, useMemo } from 'react';
+import { trpc } from '@/lib/trpc';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';

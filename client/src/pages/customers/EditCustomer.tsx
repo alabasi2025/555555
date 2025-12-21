@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import DashboardLayout from "@/components/DashboardLayout"; // افتراض وجود هذا المكون
 import { useState, useEffect } from "react";
+import { trpc } from "@/lib/trpc";
 import { Loader2 } from "lucide-react";
 import { useRoute } from "wouter";
 

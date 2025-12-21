@@ -1,5 +1,6 @@
 // @ts-nocheck
 import React, { useState, useMemo } from 'react';
+import { trpc } from '@/lib/trpc';
 import { ColumnDef, flexRender, getCoreRowModel, useReactTable, getPaginationRowModel, getSortedRowModel, getFilteredRowModel, SortingState, ColumnFiltersState } from '@tanstack/react-table';
 import { ArrowUpDown, PlusCircle, MoreHorizontal, Search, Trash2, Edit, Eye } from 'lucide-react';
 import { z } from 'zod';

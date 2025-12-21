@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useState, useEffect } from "react";
+import { trpc } from "@/lib/trpc";
 import { useLocation } from "wouter";
 
 // مدة الجلسة بالميلي ثانية

@@ -2,6 +2,7 @@
 // تم إضافة @ts-nocheck لتجنب الأخطاء المعقدة المتعلقة بـ React 19 و shadcn/ui في بيئة وهمية.
 
 import React, { useState, useMemo, useCallback } from 'react';
+import { trpc } from '@/lib/trpc';
 import * as z from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';

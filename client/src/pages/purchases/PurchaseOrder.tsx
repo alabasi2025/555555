@@ -1,5 +1,6 @@
 // @ts-nocheck
 import React, { useState, useMemo, useCallback } from 'react';
+import { trpc } from '@/lib/trpc';
 
 // =================================================================
 // TypeScript Interfaces (Merged from purchase_order_data.ts)
