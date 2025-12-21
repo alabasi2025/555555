@@ -1,22 +1,20 @@
 /**
- * نظام المصادقة المحلي - Local Authentication System (PostgreSQL)
+ * نظام المصادقة المحلي - Local Authentication System
  * يوفر مصادقة آمنة باستخدام JWT و bcrypt
  */
 
 import bcrypt from "bcryptjs";
 import { SignJWT, jwtVerify } from "jose";
-import { eq } from "drizzle-orm";
-import { drizzle } from "drizzle-orm/node-postgres";
-import { Pool } from "pg";
+import { eq, sql } from "drizzle-orm";
+import { drizzle } from "drizzle-orm/mysql2";
 import type { Request, Response } from "express";
 import { COOKIE_NAME, ONE_YEAR_MS } from "@shared/const";
 import { getSessionCookieOptions } from "./cookies";
-import { localUsers } from "../../drizzle/schema-pg";
 
 // ==================== التكوين ====================
 const JWT_SECRET = process.env.JWT_SECRET || "local-dev-secret-key-12345";
-const ACCESS_TOKEN_EXPIRY = "15m";
-const REFRESH_TOKEN_EXPIRY = "7d";
+const ACCESS_TOKEN_EXPIRY = "15m"; // 15 دقيقة
+const REFRESH_TOKEN_EXPIRY = "7d"; // 7 أيام
 const SALT_ROUNDS = 12;
 
 // ==================== الأنواع ====================
@@ -45,32 +43,18 @@ export interface AuthResult {
   error?: string;
 }
 
-// ==================== اتصال قاعدة البيانات ====================
-let _pool: Pool | null = null;
-let _db: ReturnType<typeof drizzle> | null = null;
-
-async function getDb() {
-  if (!_db && process.env.DATABASE_URL) {
-    try {
-      _pool = new Pool({
-        connectionString: process.env.DATABASE_URL,
-        max: 10,
-      });
-      _db = drizzle(_pool);
-    } catch (error) {
-      console.warn("[LocalAuth] Failed to connect to database:", error);
-      _db = null;
-    }
-  }
-  return _db;
-}
-
 // ==================== دوال التشفير ====================
 
+/**
+ * تشفير كلمة المرور باستخدام bcrypt
+ */
 export async function hashPassword(password: string): Promise<string> {
   return bcrypt.hash(password, SALT_ROUNDS);
 }
 
+/**
+ * التحقق من كلمة المرور
+ */
 export async function verifyPassword(password: string, hash: string): Promise<boolean> {
   return bcrypt.compare(password, hash);
 }
@@ -81,6 +65,9 @@ function getSecretKey() {
   return new TextEncoder().encode(JWT_SECRET);
 }
 
+/**
+ * إنشاء Access Token
+ */
 export async function createAccessToken(payload: Omit<TokenPayload, "type">): Promise<string> {
   const secretKey = getSecretKey();
   return new SignJWT({ ...payload, type: "access" })
@@ -90,6 +77,9 @@ export async function createAccessToken(payload: Omit<TokenPayload, "type">): Pr
     .sign(secretKey);
 }
 
+/**
+ * إنشاء Refresh Token
+ */
 export async function createRefreshToken(payload: Omit<TokenPayload, "type">): Promise<string> {
   const secretKey = getSecretKey();
   return new SignJWT({ ...payload, type: "refresh" })
@@ -99,6 +89,9 @@ export async function createRefreshToken(payload: Omit<TokenPayload, "type">): P
     .sign(secretKey);
 }
 
+/**
+ * التحقق من صحة Token
+ */
 export async function verifyToken(token: string): Promise<TokenPayload | null> {
   try {
     const secretKey = getSecretKey();
@@ -107,10 +100,14 @@ export async function verifyToken(token: string): Promise<TokenPayload | null> {
     });
     return payload as unknown as TokenPayload;
   } catch (error) {
+    console.warn("[LocalAuth] Token verification failed:", error);
     return null;
   }
 }
 
+/**
+ * إنشاء Session Token للتوافق مع النظام الحالي
+ */
 export async function createSessionToken(user: LocalUser): Promise<string> {
   const secretKey = getSecretKey();
   const expiresInMs = ONE_YEAR_MS;
@@ -129,6 +126,9 @@ export async function createSessionToken(user: LocalUser): Promise<string> {
     .sign(secretKey);
 }
 
+/**
+ * التحقق من Session Token
+ */
 export async function verifySessionToken(token: string): Promise<{
   openId: string;
   appId: string;
@@ -158,66 +158,87 @@ export async function verifySessionToken(token: string): Promise<{
       role: (role as string) || "user",
     };
   } catch (error) {
+    console.warn("[LocalAuth] Session verification failed:", error);
     return null;
   }
 }
 
 // ==================== دوال قاعدة البيانات ====================
 
+let _db: ReturnType<typeof drizzle> | null = null;
+
+async function getDb() {
+  if (!_db && process.env.DATABASE_URL) {
+    try {
+      _db = drizzle(process.env.DATABASE_URL);
+    } catch (error) {
+      console.warn("[LocalAuth] Failed to connect to database:", error);
+      _db = null;
+    }
+  }
+  return _db;
+}
+
+/**
+ * البحث عن مستخدم بواسطة اسم المستخدم
+ */
 export async function findUserByUsername(username: string): Promise<any | null> {
   const db = await getDb();
   if (!db) return null;
   
   try {
-    const result = await db
-      .select()
-      .from(localUsers)
-      .where(eq(localUsers.username, username))
-      .limit(1);
-    
-    return result.length > 0 && result[0].isActive ? result[0] : null;
+    const result = await db.execute(
+      sql`SELECT * FROM local_users WHERE username = ${username} AND is_active = 1 LIMIT 1`
+    );
+    const rows = result[0] as any[];
+    return rows.length > 0 ? rows[0] : null;
   } catch (error) {
     console.error("[LocalAuth] Error finding user:", error);
     return null;
   }
 }
 
+/**
+ * البحث عن مستخدم بواسطة البريد الإلكتروني
+ */
 export async function findUserByEmail(email: string): Promise<any | null> {
   const db = await getDb();
   if (!db) return null;
   
   try {
-    const result = await db
-      .select()
-      .from(localUsers)
-      .where(eq(localUsers.email, email))
-      .limit(1);
-    
-    return result.length > 0 && result[0].isActive ? result[0] : null;
+    const result = await db.execute(
+      sql`SELECT * FROM local_users WHERE email = ${email} AND is_active = 1 LIMIT 1`
+    );
+    const rows = result[0] as any[];
+    return rows.length > 0 ? rows[0] : null;
   } catch (error) {
     console.error("[LocalAuth] Error finding user by email:", error);
     return null;
   }
 }
 
+/**
+ * البحث عن مستخدم بواسطة المعرف
+ */
 export async function findUserById(id: number): Promise<any | null> {
   const db = await getDb();
   if (!db) return null;
   
   try {
-    const result = await db
-      .select()
-      .from(localUsers)
-      .where(eq(localUsers.id, id))
-      .limit(1);
-    
-    return result.length > 0 && result[0].isActive ? result[0] : null;
+    const result = await db.execute(
+      sql`SELECT * FROM local_users WHERE id = ${id} AND is_active = 1 LIMIT 1`
+    );
+    const rows = result[0] as any[];
+    return rows.length > 0 ? rows[0] : null;
   } catch (error) {
     console.error("[LocalAuth] Error finding user by id:", error);
     return null;
   }
 }
 
+/**
+ * إنشاء مستخدم جديد
+ */
 export async function createUser(data: {
   username: string;
   email?: string;
@@ -229,6 +250,7 @@ export async function createUser(data: {
   if (!db) return { success: false, error: "Database not available" };
   
   try {
+    // التحقق من عدم وجود المستخدم
     const existingUser = await findUserByUsername(data.username);
     if (existingUser) {
       return { success: false, error: "اسم المستخدم موجود بالفعل" };
@@ -241,48 +263,54 @@ export async function createUser(data: {
       }
     }
     
+    // تشفير كلمة المرور
     const passwordHash = await hashPassword(data.password);
     
-    const result = await db.insert(localUsers).values({
-      username: data.username,
-      email: data.email || null,
-      passwordHash: passwordHash,
-      name: data.name || null,
-      role: data.role || "user",
-      isActive: true,
-    }).returning({ id: localUsers.id });
+    // إدراج المستخدم
+    const emailValue = data.email || null;
+    const nameValue = data.name || null;
+    const roleValue = data.role || "user";
+    const result = await db.execute(
+      sql`INSERT INTO local_users (username, email, password_hash, name, role, is_active, created_at, updated_at)
+       VALUES (${data.username}, ${emailValue}, ${passwordHash}, ${nameValue}, ${roleValue}, 1, NOW(), NOW())`
+    );
     
-    return { success: true, userId: result[0].id };
+    const insertResult = result[0] as any;
+    return { success: true, userId: insertResult.insertId };
   } catch (error) {
     console.error("[LocalAuth] Error creating user:", error);
     return { success: false, error: "فشل في إنشاء المستخدم" };
   }
 }
 
+/**
+ * تحديث آخر تسجيل دخول
+ */
 export async function updateLastLogin(userId: number): Promise<void> {
   const db = await getDb();
   if (!db) return;
   
   try {
-    await db
-      .update(localUsers)
-      .set({ lastLogin: new Date(), updatedAt: new Date() })
-      .where(eq(localUsers.id, userId));
+    await db.execute(
+      sql`UPDATE local_users SET last_login = NOW(), updated_at = NOW() WHERE id = ${userId}`
+    );
   } catch (error) {
     console.error("[LocalAuth] Error updating last login:", error);
   }
 }
 
+/**
+ * تحديث كلمة المرور
+ */
 export async function updatePassword(userId: number, newPassword: string): Promise<boolean> {
   const db = await getDb();
   if (!db) return false;
   
   try {
     const passwordHash = await hashPassword(newPassword);
-    await db
-      .update(localUsers)
-      .set({ passwordHash: passwordHash, updatedAt: new Date() })
-      .where(eq(localUsers.id, userId));
+    await db.execute(
+      sql`UPDATE local_users SET password_hash = ${passwordHash}, updated_at = NOW() WHERE id = ${userId}`
+    );
     return true;
   } catch (error) {
     console.error("[LocalAuth] Error updating password:", error);
@@ -292,20 +320,27 @@ export async function updatePassword(userId: number, newPassword: string): Promi
 
 // ==================== دوال المصادقة الرئيسية ====================
 
+/**
+ * تسجيل الدخول
+ */
 export async function login(username: string, password: string): Promise<AuthResult> {
   try {
+    // البحث عن المستخدم
     const user = await findUserByUsername(username);
     if (!user) {
       return { success: false, error: "اسم المستخدم أو كلمة المرور غير صحيحة" };
     }
     
-    const isValid = await verifyPassword(password, user.passwordHash);
+    // التحقق من كلمة المرور
+    const isValid = await verifyPassword(password, user.password_hash);
     if (!isValid) {
       return { success: false, error: "اسم المستخدم أو كلمة المرور غير صحيحة" };
     }
     
+    // تحديث آخر تسجيل دخول
     await updateLastLogin(user.id);
     
+    // إنشاء التوكنات
     const tokenPayload = {
       userId: user.id,
       username: user.username,
@@ -314,6 +349,15 @@ export async function login(username: string, password: string): Promise<AuthRes
     
     const accessToken = await createAccessToken(tokenPayload);
     const refreshToken = await createRefreshToken(tokenPayload);
+    const sessionToken = await createSessionToken({
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      name: user.name,
+      role: user.role,
+      isActive: user.is_active,
+      lastLogin: user.last_login,
+    });
     
     return {
       success: true,
@@ -323,10 +367,10 @@ export async function login(username: string, password: string): Promise<AuthRes
         email: user.email,
         name: user.name,
         role: user.role,
-        isActive: user.isActive,
-        lastLogin: user.lastLogin,
+        isActive: user.is_active,
+        lastLogin: user.last_login,
       },
-      accessToken,
+      accessToken: sessionToken, // نستخدم session token للتوافق
       refreshToken,
     };
   } catch (error) {
@@ -335,8 +379,65 @@ export async function login(username: string, password: string): Promise<AuthRes
   }
 }
 
+/**
+ * تجديد التوكن
+ */
+export async function refreshAccessToken(refreshToken: string): Promise<AuthResult> {
+  try {
+    const payload = await verifyToken(refreshToken);
+    if (!payload || payload.type !== "refresh") {
+      return { success: false, error: "Refresh token غير صالح" };
+    }
+    
+    // البحث عن المستخدم
+    const user = await findUserById(payload.userId);
+    if (!user) {
+      return { success: false, error: "المستخدم غير موجود" };
+    }
+    
+    // إنشاء توكن جديد
+    const tokenPayload = {
+      userId: user.id,
+      username: user.username,
+      role: user.role,
+    };
+    
+    const accessToken = await createAccessToken(tokenPayload);
+    const sessionToken = await createSessionToken({
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      name: user.name,
+      role: user.role,
+      isActive: user.is_active,
+      lastLogin: user.last_login,
+    });
+    
+    return {
+      success: true,
+      user: {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        name: user.name,
+        role: user.role,
+        isActive: user.is_active,
+        lastLogin: user.last_login,
+      },
+      accessToken: sessionToken,
+    };
+  } catch (error) {
+    console.error("[LocalAuth] Refresh token error:", error);
+    return { success: false, error: "فشل في تجديد التوكن" };
+  }
+}
+
+/**
+ * التحقق من المستخدم الحالي من الـ Request
+ */
 export async function authenticateRequest(req: Request): Promise<LocalUser | null> {
   try {
+    // استخراج التوكن من الكوكيز أو الهيدر
     const cookieHeader = req.headers.cookie;
     let token: string | undefined;
     
@@ -349,6 +450,7 @@ export async function authenticateRequest(req: Request): Promise<LocalUser | nul
       token = cookies[COOKIE_NAME];
     }
     
+    // محاولة الحصول على التوكن من الهيدر
     if (!token) {
       const authHeader = req.headers.authorization;
       if (authHeader?.startsWith("Bearer ")) {
@@ -360,11 +462,13 @@ export async function authenticateRequest(req: Request): Promise<LocalUser | nul
       return null;
     }
     
+    // التحقق من التوكن
     const payload = await verifySessionToken(token);
     if (!payload) {
       return null;
     }
     
+    // البحث عن المستخدم
     const user = await findUserById(payload.userId);
     if (!user) {
       return null;
@@ -376,8 +480,8 @@ export async function authenticateRequest(req: Request): Promise<LocalUser | nul
       email: user.email,
       name: user.name,
       role: user.role,
-      isActive: user.isActive,
-      lastLogin: user.lastLogin,
+      isActive: user.is_active,
+      lastLogin: user.last_login,
     };
   } catch (error) {
     console.error("[LocalAuth] Authentication error:", error);
@@ -385,49 +489,38 @@ export async function authenticateRequest(req: Request): Promise<LocalUser | nul
   }
 }
 
-export async function setLoginCookie(res: Response, req: Request, user: LocalUser, rememberMe: boolean = false): Promise<void> {
-  const sessionToken = await createSessionToken(user);
-  const cookieOptions = getSessionCookieOptions(req);
-  
-  if (rememberMe) {
-    cookieOptions.maxAge = 30 * 24 * 60 * 60 * 1000; // 30 days
-  }
-  
-  res.cookie(COOKIE_NAME, sessionToken, cookieOptions);
-}
-
+/**
+ * إنشاء المستخدم الافتراضي (admin)
+ */
 export async function ensureDefaultAdmin(): Promise<void> {
   const db = await getDb();
   if (!db) return;
   
   try {
-    const existingAdmin = await findUserByUsername("admin");
-    if (!existingAdmin) {
-      await createUser({
+    // التحقق من وجود مستخدم admin
+    const adminUser = await findUserByUsername("admin");
+    if (!adminUser) {
+      console.log("[LocalAuth] Creating default admin user...");
+      const result = await createUser({
         username: "admin",
         email: "admin@powerstation.local",
-        password: "admin123",
+        password: "admin123", // يجب تغييرها في الإنتاج
         name: "مدير النظام",
         role: "admin",
       });
-      console.log("[LocalAuth] Default admin user created");
+      
+      if (result.success) {
+        console.log("[LocalAuth] Default admin user created successfully");
+      } else {
+        console.error("[LocalAuth] Failed to create default admin:", result.error);
+      }
     }
   } catch (error) {
     console.error("[LocalAuth] Error ensuring default admin:", error);
   }
 }
 
-const localAuth = {
-  login,
-  createUser,
-  findUserByUsername,
-  findUserByEmail,
-  findUserById,
-  updateLastLogin,
-  updatePassword,
-  authenticateRequest,
-  setLoginCookie,
-  ensureDefaultAdmin,
+export default {
   hashPassword,
   verifyPassword,
   createAccessToken,
@@ -435,6 +528,14 @@ const localAuth = {
   verifyToken,
   createSessionToken,
   verifySessionToken,
+  findUserByUsername,
+  findUserByEmail,
+  findUserById,
+  createUser,
+  updateLastLogin,
+  updatePassword,
+  login,
+  refreshAccessToken,
+  authenticateRequest,
+  ensureDefaultAdmin,
 };
-
-export default localAuth;

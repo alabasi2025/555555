@@ -6,7 +6,7 @@ import {
   ticketComments, 
   ticketHistory,
   ticketCategories 
-} from "../../drizzle/schema";
+} from "../../drizzle/schema-pg";
 import { eq, and, desc, sql, like, or, isNull } from "drizzle-orm";
 
 export const ticketsRouter = router({

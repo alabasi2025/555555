@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { router, publicProcedure } from "../_core/trpc";
 import { getDb } from "../db";
-import { testSuites, testCases, testRuns, testResults, testCoverage } from "../../drizzle/schema";
+import { testSuites, testCases, testRuns, testResults, testCoverage } from "../../drizzle/schema-pg";
 import { eq, desc, and, sql, count, avg, sum } from "drizzle-orm";
 
 export const testingRouter = router({

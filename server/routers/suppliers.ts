@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { router, protectedProcedure } from "../_core/trpc";
 import { getDb } from "../db";
-import { suppliers } from "../../drizzle/schema";
+import { suppliers } from "../../drizzle/schema-pg";
 import { eq, like, and } from "drizzle-orm";
 
 const createSupplierSchema = z.object({

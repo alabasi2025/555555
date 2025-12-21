@@ -1,14 +1,14 @@
 import { z } from "zod";
 import { router, publicProcedure } from "../_core/trpc";
 import { getDb } from "../db";
-import { auditLogs } from "../../drizzle/schema";
+import { auditLogs } from "../../drizzle/schema-pg";
 import { 
   securityAssessments, 
   securityFindings, 
   securityPolicies,
   privacyRequests,
   privacyConsents 
-} from "../../drizzle/schema";
+} from "../../drizzle/schema-pg";
 import { eq, desc, and, sql, count, gte, lte } from "drizzle-orm";
 
 export const securityRouter = router({

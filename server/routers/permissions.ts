@@ -4,7 +4,7 @@ import { getDb } from "../db";
 import { 
   roles,
   users
-} from "../../drizzle/schema";
+} from "../../drizzle/schema-pg";
 import { eq, sql, desc, and, like, count, inArray } from "drizzle-orm";
 
 // ============================================

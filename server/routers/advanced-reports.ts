@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { publicProcedure, router } from "../_core/trpc";
 import { getDb } from "../db";
-import { customReportDefinitions, reportExecutionLogs, financialForecasts, kpiDefinitions, kpiValues } from "../../drizzle/schema";
+import { customReportDefinitions, reportExecutionLogs, financialForecasts, kpiDefinitions, kpiValues } from "../../drizzle/schema-pg";
 import { eq, desc, and, sql, gte, lte } from "drizzle-orm";
 
 export const advancedReportsRouter = router({

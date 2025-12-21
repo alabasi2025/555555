@@ -12,7 +12,7 @@ import {
   subscriptions,
   meters,
   tickets
-} from "../../drizzle/schema";
+} from "../../drizzle/schema-pg";
 import { eq, and, desc, sql, gte, lte } from "drizzle-orm";
 import crypto from "crypto";
 

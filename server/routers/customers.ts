@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { router, protectedProcedure } from "../_core/trpc";
 import { getDb } from "../db";
-import { customers } from "../../drizzle/schema";
+import { customers } from "../../drizzle/schema-pg";
 import { eq, like, and } from "drizzle-orm";
 
 const createCustomerSchema = z.object({

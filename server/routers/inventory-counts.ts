@@ -8,7 +8,7 @@ import {
   inventoryAdjustmentItems,
   warehouseStock,
   items
-} from "../../drizzle/schema";
+} from "../../drizzle/schema-pg";
 import { eq, and, desc, sql, like, or } from "drizzle-orm";
 
 export const inventoryCountsRouter = router({

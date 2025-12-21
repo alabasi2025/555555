@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { getDb } from "../db";
-import { chartOfAccounts, accountBalances } from "../../drizzle/schema";
+import { chartOfAccounts, accountBalances } from "../../drizzle/schema-pg";
 import { eq, like, or, desc } from "drizzle-orm";
 
 const router = Router();

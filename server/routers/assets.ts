@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { router, publicProcedure } from "../_core/trpc";
 import { getDb } from "../db";
-import { assets } from "../../drizzle/schema";
+import { assets } from "../../drizzle/schema-pg";
 import { eq } from "drizzle-orm";
 
 export const assetsRouter = router({

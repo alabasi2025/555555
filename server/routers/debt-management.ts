@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { publicProcedure, router } from "../_core/trpc";
 import { getDb } from "../db";
-import { debtRecords, paymentPlans, paymentPlanInstallments, penaltiesAndInterests } from "../../drizzle/schema";
+import { debtRecords, paymentPlans, paymentPlanInstallments, penaltiesAndInterests } from "../../drizzle/schema-pg";
 import { eq, desc, and, sql, gte, lte } from "drizzle-orm";
 
 export const debtManagementRouter = router({

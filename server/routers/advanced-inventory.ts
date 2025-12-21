@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { publicProcedure, router } from "../_core/trpc";
 import { getDb } from "../db";
-import { inventoryAlerts, inventoryForecasts, inventoryLots, items, suppliers, inventoryMovements } from "../../drizzle/schema";
+import { inventoryAlerts, inventoryForecasts, inventoryLots, items, suppliers, inventoryMovements } from "../../drizzle/schema-pg";
 import { eq, desc, and, sql, gte, lte } from "drizzle-orm";
 
 export const advancedInventoryRouter = router({

@@ -7,7 +7,7 @@ import {
   recurringInvoiceHistory,
   invoices,
   invoiceItems 
-} from "../../drizzle/schema";
+} from "../../drizzle/schema-pg";
 import { eq, and, desc, sql, lte, gte } from "drizzle-orm";
 
 export const recurringInvoicesRouter = router({

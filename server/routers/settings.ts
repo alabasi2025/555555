@@ -11,7 +11,7 @@ import {
   systemAlerts,
   notificationTemplates,
   notificationLogs
-} from "../../drizzle/schema";
+} from "../../drizzle/schema-pg";
 import { eq, desc, and, count, gte, lte } from "drizzle-orm";
 
 export const settingsRouter = router({

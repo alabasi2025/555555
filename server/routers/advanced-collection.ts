@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { publicProcedure, router } from "../_core/trpc";
 import { getDb } from "../db";
-import { paymentGateways, customerWallets, walletTransactions, autoCollectionRules, autoCollectionLogs } from "../../drizzle/schema";
+import { paymentGateways, customerWallets, walletTransactions, autoCollectionRules, autoCollectionLogs } from "../../drizzle/schema-pg";
 import { eq, desc, and, sql } from "drizzle-orm";
 
 export const advancedCollectionRouter = router({

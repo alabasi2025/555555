@@ -2,7 +2,7 @@
 import { z } from "zod";
 import { router, protectedProcedure } from "../_core/trpc";
 import { getDb } from "../db";
-import { invoices, invoiceItems } from "../../drizzle/schema";
+import { invoices, invoiceItems } from "../../drizzle/schema-pg";
 import { eq, like, and, gte, lte } from "drizzle-orm";
 
 const invoiceItemSchema = z.object({

@@ -10,7 +10,7 @@ import {
   suppliers,
   generalLedger,
   journalEntries
-} from "../../drizzle/schema";
+} from "../../drizzle/schema-pg";
 import { eq, and, gte, lte, sql, sum, desc } from "drizzle-orm";
 
 // Zod schemas for validation

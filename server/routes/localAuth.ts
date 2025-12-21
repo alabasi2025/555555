@@ -26,18 +26,21 @@ router.post("/login", async (req: Request, res: Response) => {
     // محاولة تسجيل الدخول
     const result = await localAuth.login(username, password);
     
-    if (!result.success) {
+    if (!result.success || !result.user) {
       return res.status(401).json({
         success: false,
         error: result.error,
       });
     }
     
+    // إنشاء session token للتوافق مع tRPC context
+    const sessionToken = await localAuth.createSessionToken(result.user);
+    
     // تعيين الكوكي
     const cookieOptions = getSessionCookieOptions(req);
     const maxAge = rememberMe ? ONE_YEAR_MS : 24 * 60 * 60 * 1000; // يوم واحد أو سنة
     
-    res.cookie(COOKIE_NAME, result.accessToken!, {
+    res.cookie(COOKIE_NAME, sessionToken, {
       ...cookieOptions,
       maxAge,
     });

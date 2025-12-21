@@ -8,7 +8,7 @@ import {
   fieldTasks,
   meterReadings,
   workOrders
-} from "../../drizzle/schema";
+} from "../../drizzle/schema-pg";
 import { eq, and, desc, sql, like, or, gte, lte, between } from "drizzle-orm";
 
 export const fieldOperationsRouter = router({

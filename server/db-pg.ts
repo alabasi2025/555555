@@ -1,16 +1,15 @@
 import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
-import * as schema from "../drizzle/schema-pg";
+import { users, localUsers, InsertUser } from "../drizzle/schema-pg";
 import { ENV } from './_core/env';
 
-export type User = schema.User;
-export type InsertUser = schema.InsertUser;
-
 let _pool: Pool | null = null;
-let _db: ReturnType<typeof drizzle<typeof schema>> | null = null;
+let _db: ReturnType<typeof drizzle> | null = null;
 
-// الحصول على Pool الاتصال بـ PostgreSQL
+/**
+ * الحصول على Pool الاتصال بـ PostgreSQL
+ */
 export function getPool(): Pool | null {
   if (!_pool && process.env.DATABASE_URL) {
     try {
@@ -32,18 +31,22 @@ export function getPool(): Pool | null {
   return _pool;
 }
 
-// Lazily create the drizzle instance so local tooling can run without a DB.
-export function getDb() {
+/**
+ * الحصول على Drizzle instance
+ */
+export async function getDb() {
   if (!_db) {
     const pool = getPool();
     if (pool) {
-      _db = drizzle(pool, { schema });
+      _db = drizzle(pool);
     }
   }
   return _db;
 }
 
-// إغلاق الاتصال بقاعدة البيانات
+/**
+ * إغلاق الاتصال بقاعدة البيانات
+ */
 export async function closeDb() {
   if (_pool) {
     await _pool.end();
@@ -52,28 +55,31 @@ export async function closeDb() {
   }
 }
 
+/**
+ * إدراج أو تحديث مستخدم
+ */
 export async function upsertUser(user: InsertUser): Promise<void> {
   if (!user.openId) {
     throw new Error("User openId is required for upsert");
   }
-
-  const db = getDb();
+  
+  const db = await getDb();
   if (!db) {
     console.warn("[Database] Cannot upsert user: database not available");
     return;
   }
-
+  
   try {
     const existingUser = await db
       .select()
-      .from(schema.users)
-      .where(eq(schema.users.openId, user.openId))
+      .from(users)
+      .where(eq(users.openId, user.openId))
       .limit(1);
     
     if (existingUser.length > 0) {
       // تحديث المستخدم الموجود
       await db
-        .update(schema.users)
+        .update(users)
         .set({
           name: user.name ?? existingUser[0].name,
           email: user.email ?? existingUser[0].email,
@@ -82,11 +88,11 @@ export async function upsertUser(user: InsertUser): Promise<void> {
           lastSignedIn: new Date(),
           updatedAt: new Date(),
         })
-        .where(eq(schema.users.openId, user.openId));
+        .where(eq(users.openId, user.openId));
     } else {
       // إدراج مستخدم جديد
       const role = user.openId === ENV.ownerOpenId ? 'admin' : (user.role || 'user');
-      await db.insert(schema.users).values({
+      await db.insert(users).values({
         openId: user.openId,
         name: user.name,
         email: user.email,
@@ -101,17 +107,59 @@ export async function upsertUser(user: InsertUser): Promise<void> {
   }
 }
 
+/**
+ * الحصول على مستخدم بواسطة OpenId
+ */
 export async function getUserByOpenId(openId: string) {
-  const db = getDb();
+  const db = await getDb();
   if (!db) {
     console.warn("[Database] Cannot get user: database not available");
     return undefined;
   }
-
-  const result = await db.select().from(schema.users).where(eq(schema.users.openId, openId)).limit(1);
-
+  
+  const result = await db
+    .select()
+    .from(users)
+    .where(eq(users.openId, openId))
+    .limit(1);
+  
   return result.length > 0 ? result[0] : undefined;
 }
 
-// Re-export schema for convenience
-export { schema };
+/**
+ * الحصول على مستخدم محلي بواسطة اسم المستخدم
+ */
+export async function getLocalUserByUsername(username: string) {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot get local user: database not available");
+    return undefined;
+  }
+  
+  const result = await db
+    .select()
+    .from(localUsers)
+    .where(eq(localUsers.username, username))
+    .limit(1);
+  
+  return result.length > 0 ? result[0] : undefined;
+}
+
+/**
+ * الحصول على مستخدم محلي بواسطة المعرف
+ */
+export async function getLocalUserById(id: number) {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot get local user: database not available");
+    return undefined;
+  }
+  
+  const result = await db
+    .select()
+    .from(localUsers)
+    .where(eq(localUsers.id, id))
+    .limit(1);
+  
+  return result.length > 0 ? result[0] : undefined;
+}

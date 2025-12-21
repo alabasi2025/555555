@@ -2,7 +2,7 @@
 import { z } from "zod";
 import { router, protectedProcedure } from "../_core/trpc";
 import { getDb } from "../db";
-import { items, inventoryMovements, purchaseRequests, purchaseRequestItems } from "../../drizzle/schema";
+import { items, inventoryMovements, purchaseRequests, purchaseRequestItems } from "../../drizzle/schema-pg";
 import { eq, like, and, lte } from "drizzle-orm";
 
 const createItemSchema = z.object({

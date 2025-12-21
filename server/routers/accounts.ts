@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { router, publicProcedure, protectedProcedure } from "../_core/trpc";
 import { getDb } from "../db";
-import { chartOfAccounts, accountBalances } from "../../drizzle/schema";
+import { chartOfAccounts, accountBalances } from "../../drizzle/schema-pg";
 import { eq, like, and, isNull } from "drizzle-orm";
 
 // Zod schemas for validation

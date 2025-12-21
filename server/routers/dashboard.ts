@@ -12,7 +12,7 @@ import {
   assets,
   maintenanceSchedules,
   journalEntries,
-} from "../../drizzle/schema";
+} from "../../drizzle/schema-pg";
 import { eq, sql, desc, and, gte, lte, count, sum, avg, lt } from "drizzle-orm";
 
 // ============================================

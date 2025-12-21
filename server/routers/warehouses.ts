@@ -7,7 +7,7 @@ import {
   warehouseStock, 
   stockTransfers, 
   stockTransferItems 
-} from "../../drizzle/schema";
+} from "../../drizzle/schema-pg";
 import { eq, and, desc, sql, like, or } from "drizzle-orm";
 
 export const warehousesRouter = router({

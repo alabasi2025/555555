@@ -7,7 +7,7 @@ import {
   promotions, 
   couponCodes, 
   couponUsage 
-} from "../../drizzle/schema";
+} from "../../drizzle/schema-pg";
 import { eq, and, desc, sql, like, or, gte, lte } from "drizzle-orm";
 
 export const discountsRouter = router({

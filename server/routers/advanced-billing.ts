@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { publicProcedure, router } from "../_core/trpc";
 import { getDb } from "../db";
-import { invoiceTemplates, creditNotes, creditNoteItems } from "../../drizzle/schema";
+import { invoiceTemplates, creditNotes, creditNoteItems } from "../../drizzle/schema-pg";
 import { eq, desc, and, sql } from "drizzle-orm";
 
 export const advancedBillingRouter = router({

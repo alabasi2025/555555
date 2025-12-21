@@ -3,7 +3,7 @@ import { publicProcedure, router } from "../_core/trpc";
 import { getDb } from "../db";
 import { 
   users
-} from "../../drizzle/schema";
+} from "../../drizzle/schema-pg";
 import { eq, sql, desc, and, gte, lte, like, count, or } from "drizzle-orm";
 
 // ============================================

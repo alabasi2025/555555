@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { router, publicProcedure, protectedProcedure } from "../_core/trpc";
 import { getDb } from "../db";
-import { purchaseRequests, purchaseRequestItems, materialReceipts, materialReceiptItems, suppliers, items } from "../../drizzle/schema";
+import { purchaseRequests, purchaseRequestItems, materialReceipts, materialReceiptItems, suppliers, items } from "../../drizzle/schema-pg";
 import { eq, like, and, desc } from "drizzle-orm";
 
 // Zod schemas for validation

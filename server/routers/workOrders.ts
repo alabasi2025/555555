@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { router, publicProcedure } from "../_core/trpc";
 import { getDb } from "../db";
-import { workOrders } from "../../drizzle/schema";
+import { workOrders } from "../../drizzle/schema-pg";
 import { eq } from "drizzle-orm";
 
 export const workOrdersRouter = router({
