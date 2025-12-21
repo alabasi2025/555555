@@ -1,5 +1,6 @@
 // @ts-nocheck
 import React, { useState, useMemo } from 'react';
+import { trpc } from '@/lib/trpc';
 import { ColumnDef, flexRender, getCoreRowModel, useReactTable, getSortedRowModel, getFilteredRowModel, getPaginationRowModel, SortingState } from '@tanstack/react-table';
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
